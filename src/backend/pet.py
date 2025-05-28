@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class Pet:
-    def __init__(self, name:str, species:int, birth:datetime=datetime.today(), happy:float=100, hunger:float=100, difficulty:int=0):
+    def __init__(self, name:str, species:int, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0):
         """
         Klasa Zwierzaka
 
@@ -12,14 +12,21 @@ class Pet:
             birth(datetime): Data urodzenia
             happy(float): Wskaznik szczescia
             hunger(float): Wskaznik glodu
-            difficulty(int): Trudnosc gry
+            tired(float): Wskaznik zmeczenia
+            exp(float): Ilosc doswiadczenia
         """
         self.name = name
         self.species = species
         self.birth = birth
         self.happy = happy
         self.hunger = hunger
-        self.difficult = difficulty
+        self.tired = tired
+        self.exp = exp
+
+    def update(self):
+        self.happy -= 0.5
+        self.hunger -= 0.5
+        self.tired -= 0.5
 
     def feed(self, food:float):
         """
@@ -32,11 +39,15 @@ class Pet:
             None
         """
         self.hunger += food
+        if self.hunger < 0:
+            self.hunger = 0
+        elif self.hunger > 100:
+            self.hunger = 100
 
     def play(self, fun:float):
         """
         Zabawa ze zwierzakiem.
-        Zwieksza wskaznik szczescia i zmniejsza najedzenie.
+        Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
 
         Args:
             fun(float): Jak bardzo maleje znudzenie
@@ -45,4 +56,19 @@ class Pet:
 
         """
         self.happy += fun
-        self.hunger -= fun/10
+        self.feed(-fun/10)
+        if self.happy < 0:
+            self.happy = 0
+        elif self.happy > 100:
+            self.happy = 100
+    def sleep(self):
+        """
+        Zwierzak spi
+
+
+        """
+        self.tired+=1
+        if self.tired > 100:
+            self.tired = 100
+        elif self.tired < 0:
+            self.tired = 0

@@ -21,8 +21,9 @@ def save(pet: Pet, filename: str):
             "birth": pet.birth,
             "happy": pet.happy,
             "hunger": pet.hunger,
-            "save_date": datetime.today().isoformat(),
-            "difficulty": pet.difficult,
+            "exp": pet.exp,
+            "tired": pet.tired,
+            "save_date": datetime.today().isoformat()
         }
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
