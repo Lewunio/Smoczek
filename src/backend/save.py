@@ -1,21 +1,34 @@
 import json
+from datetime import datetime
 
-def save(data: dict, filename: str):
+from pet import Pet
+
+
+def save(pet: Pet, filename: str):
     """
-        Zapisuje stan gry do pliku JSON.
-
+        Zapisuje stan zwierzaka do pliku JSON.
+        Przeksztalca dane zwierzaka na dict i zapisuje date.
         Args:
-            data (dict): Dane gry do zapisu.
+            pet (Pet): Dane zwierzaka do zapisu.
             filename (str): Nazwa pliku do zapisu.
         Returns:
             None
     """
     try:
+        data = {
+            "name": pet.name,
+            "species": pet.species,
+            "birth": pet.birth,
+            "happy": pet.happy,
+            "hunger": pet.hunger,
+            "save_date": datetime.today().isoformat(),
+            "difficulty": pet.difficult,
+        }
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
-        print(f"Gra została zapisana do pliku '{filename}'.")
+        print(f"Stan został zapisany do pliku '{filename}'.")
     except Exception as e:
-        print(f"Błąd zapisu gry: {e}")
+        print(f"Błąd zapisu: {e}")
 
 def load(filename: str) -> dict:
     """
