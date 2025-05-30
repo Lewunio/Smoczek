@@ -30,9 +30,7 @@ def window(pet):
         exp_label.config(text=f"⭐ Doświadczenie: {pet.exp}")
 
     def decay_stats():
-        pet.hunger = min(100, pet.hunger - 0.5)
-        pet.tired = min(100, pet.tired -0.5)
-        pet.happy = max(0, pet.happy - 0.5)
+        pet.update_stats()
         update_labels()
         root.after(3000, decay_stats)
 
