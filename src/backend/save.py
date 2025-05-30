@@ -1,10 +1,10 @@
 import json
 from datetime import datetime
 
-from pet import Pet
+from .pet import Pet
 
 
-def save(pet: Pet, filename: str):
+def save_game(pet: Pet, filename: str):
     """
         Zapisuje stan zwierzaka do pliku JSON.
         Przeksztalca dane zwierzaka na dict i zapisuje date.

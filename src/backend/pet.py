@@ -72,3 +72,11 @@ class Pet:
             self.tired = 100
         elif self.tired < 0:
             self.tired = 0
+    def __str__(self):
+        return (f"Name: {self.name}\n"
+                f"Species: {self.species}\n"
+                f"Birth date: {self.birth}\n"
+                f"Happiness: {self.happy}/100\n"
+                f"Hunger: {self.hunger}/100\n"
+                f"Tiredness: {self.tired}/100\n"
+                f"Experience: {self.exp}")
