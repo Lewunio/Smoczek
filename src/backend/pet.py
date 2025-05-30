@@ -23,55 +23,25 @@ class Pet:
         self.tired = tired
         self.exp = exp
 
-    def update(self):
-        self.happy -= 0.5
-        self.hunger -= 0.5
-        self.tired -= 0.5
+    def sleep(self):
+        """Zwierzak spi"""
+        self.tired = max(0, self.tired - 20)
+        self.exp += 5
 
-    def feed(self, food:float):
-        """
-        Karmienie zwierzaka
+    def eat(self):
+        """Karmienie zwierzaka"""
+        self.hunger = max(0, self.hunger - 20)
+        self.exp += 5
 
-        Args:
-            food(float): Wartosc odzywca
-
-        Returns:
-            None
-        """
-        self.hunger += food
-        if self.hunger < 0:
-            self.hunger = 0
-        elif self.hunger > 100:
-            self.hunger = 100
-
-    def play(self, fun:float):
+    def play(self):
         """
         Zabawa ze zwierzakiem.
         Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
-
-        Args:
-            fun(float): Jak bardzo maleje znudzenie
-
-        Returns:
-
         """
-        self.happy += fun
-        self.feed(-fun/10)
-        if self.happy < 0:
-            self.happy = 0
-        elif self.happy > 100:
-            self.happy = 100
-    def sleep(self):
-        """
-        Zwierzak spi
-
-
-        """
-        self.tired+=1
-        if self.tired > 100:
-            self.tired = 100
-        elif self.tired < 0:
-            self.tired = 0
+        self.happy = min(100, self.happy + 20)
+        self.tired = min(100, self.tired + 10)
+        self.hunger = min(100, self.hunger + 10)
+        self.exp += 10
     def __str__(self):
         return (f"Name: {self.name}\n"
                 f"Species: {self.species}\n"

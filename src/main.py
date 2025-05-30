@@ -1,10 +1,13 @@
 from datetime import datetime
+from time import sleep
 
 from backend import Pet
+from frontend import gui
 
 
 def main():
-    pet = Pet("Adas",0)
+    pass
+    # pet = Pet("Adas",0)
     pet2 = Pet(
         name="Milo",
         species=1,
@@ -14,7 +17,15 @@ def main():
         tired=20,
         exp=120
     )
-    print(pet)
-    print(pet2)
+    gui.menu()
+    # print(pet)
+    # print(pet2)
+    # while True:
+    #     pet.update()
+    #     # pet2.update()
+    #     print(pet)
+    #     sleep(5)
+    #     # print(pet2)
+    #     pet.feed(20)
 if __name__ == "__main__":
     main()
