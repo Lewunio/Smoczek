@@ -29,6 +29,13 @@ def window(pet):
         tired_label.config(text=f"😴 Zmęczenie: {pet.tired}/100")
         exp_label.config(text=f"⭐ Doświadczenie: {pet.exp}")
 
+    def decay_stats():
+        pet.hunger = min(100, pet.hunger - 0.5)
+        pet.tired = min(100, pet.tired -0.5)
+        pet.happy = max(0, pet.happy - 0.5)
+        update_labels()
+        root.after(3000, decay_stats)
+
     for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
         label.pack(anchor="w")
 
@@ -41,6 +48,7 @@ def window(pet):
     tk.Button(button_frame, text="🎮 Baw się", command=pet.play, width=10).grid(row=0, column=2, padx=5)
 
     update_labels()
+    decay_stats()
     root.mainloop()
 def menu():
     root = tk.Tk()

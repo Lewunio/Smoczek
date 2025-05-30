@@ -25,12 +25,12 @@ class Pet:
 
     def sleep(self):
         """Zwierzak spi"""
-        self.tired = max(0, self.tired - 20)
+        self.tired = max(0, self.tired +20)
         self.exp += 5
 
     def eat(self):
         """Karmienie zwierzaka"""
-        self.hunger = max(0, self.hunger - 20)
+        self.hunger = max(0, self.hunger + 20)
         self.exp += 5
 
     def play(self):
@@ -39,8 +39,8 @@ class Pet:
         Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
         """
         self.happy = min(100, self.happy + 20)
-        self.tired = min(100, self.tired + 10)
-        self.hunger = min(100, self.hunger + 10)
+        self.tired = min(100, self.tired - 10)
+        self.hunger = min(100, self.hunger - 10)
         self.exp += 10
     def __str__(self):
         return (f"Name: {self.name}\n"
