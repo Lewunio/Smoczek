@@ -7,9 +7,7 @@ from src.backend.save import save_game, load_game
 from .tools import make_image_button
 from .game import DinoGame
 
-chosen_species_package = None
-required_food = None
-play_time_required = None
+
 
 def window(root, pet):
     for widget in root.winfo_children():
@@ -204,6 +202,9 @@ def window(root, pet):
 
 
 def choose_egg(root, start_game_callback):
+    chosen_species_package = None
+    required_food = None
+    play_time_required = None
     for widget in root.winfo_children():
         widget.destroy()
 
