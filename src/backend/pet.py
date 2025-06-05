@@ -40,9 +40,9 @@ class Pet:
     def sleep_thread(self):
         while self.sleeping:
             self.tired = min(100.0, self.tired +2)
-            sleep(2)
             if self.tired != 100:
                 self.exp += 1
+            sleep(2)
     def eat(self):
         """Karmienie zwierzaka"""
         if self.can_eat:
