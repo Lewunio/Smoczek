@@ -31,7 +31,7 @@ class Pet:
     def sleep(self):
         """Zwierzak spi"""
         self.tired = min(100.0, self.tired +20)
-        self.exp += 5
+        self.exp += 1
 
     def eat(self):
         """Karmienie zwierzaka"""
