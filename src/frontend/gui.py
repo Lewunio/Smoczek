@@ -71,7 +71,7 @@ def choose_egg(root, start_game_callback):
     root.title("Wybierz swojego podopiecznego")
     WIDTH, HEIGHT = 1400, 800
 
-    bg_path = os.path.join("frontend", "assets", "backgrounds", "cave.png")
+    bg_path = "src/frontend/assets/backgrounds/cave.png"
     bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -100,7 +100,7 @@ def choose_egg(root, start_game_callback):
     species_packages = ["dragon", "phoenix", "griffin", "unicorn"]
 
     for i in range(4):
-        path = os.path.join("frontend", "assets", "eggs", f"egg{i + 1}.png")
+        path = f"src/frontend/assets/eggs/egg{i+1}.png"
         img = Image.open(path).resize((200, 200))
         photo = ImageTk.PhotoImage(img)
         egg_images.append(photo)
@@ -170,7 +170,7 @@ def menu():
     y = (screen_height // 2) - (HEIGHT // 2)
     root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
 
-    bg_path = os.path.join("frontend", "assets", "backgrounds", "menu.png")
+    bg_path = "src/frontend/assets/backgrounds/menu.png"
     bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
     bg_photo = ImageTk.PhotoImage(bg_image)
 
@@ -180,7 +180,7 @@ def menu():
     canvas.bg_photo = bg_photo
 
     #logo
-    logo_path = os.path.join("frontend", "assets","icons", "logo.png")
+    logo_path = "src/frontend/assets/icons/logo.png"
     logo_img = Image.open(logo_path).resize((500,400))
     logo_photo = ImageTk.PhotoImage(logo_img)
     canvas.logo_photo = logo_photo
@@ -212,7 +212,7 @@ def menu():
         "width": 20,
         "relief": "raised"
     }
-    btn_path = os.path.join("frontend", "assets", "backgrounds", "button_background.png")
+    btn_path = "src/frontend/assets/backgrounds/button_background.png"
     btn_img = Image.open(btn_path).resize((400, 75))
     btn_photo = ImageTk.PhotoImage(btn_img)
     canvas.btn_photo = btn_photo  # zapamiętaj referencję!
