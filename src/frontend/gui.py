@@ -25,7 +25,8 @@ def window(root, pet):
 
     canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack()
-    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+    canvas.is_sleeping = False
+    canvas.bg_id = canvas.create_image(0, 0, image=bg_photo, anchor="nw")
     root.bg_photo = bg_photo  # referencja, żeby nie usunęło z pamięci
 
     # === ZWIERZAK ===
@@ -86,6 +87,28 @@ def window(root, pet):
         tags = canvas.gettags(item)
         if "sleep" in tags:
             pet.sleep()
+            canvas.is_sleeping = not canvas.is_sleeping
+
+            new_bg_path = (
+                "src/frontend/assets/backgrounds/cave_night.png"
+                if canvas.is_sleeping
+                else "src/frontend/assets/backgrounds/cave.png"
+            )
+            new_bg = Image.open(new_bg_path).resize((WIDTH, HEIGHT))
+            new_bg_photo = ImageTk.PhotoImage(new_bg)
+            canvas.bg_photo = new_bg_photo
+            canvas.itemconfig(canvas.bg_id, image=new_bg_photo)
+            new_pet_image_path = (
+                f"src/frontend/assets/{pet.species}/sleep_pet.png"
+                if canvas.is_sleeping
+                else f"src/frontend/assets/{pet.species}/static_pet.png"
+            )
+            pet_img = Image.open(new_pet_image_path).resize((400, 400))
+            pet_photo = ImageTk.PhotoImage(pet_img)
+            canvas.pet_photo = pet_photo
+            canvas.itemconfig(canvas.pet_image_id, image=pet_photo)
+
+
         elif "eat" in tags:
             pet.eat()
             eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
