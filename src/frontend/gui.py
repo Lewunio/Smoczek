@@ -352,8 +352,8 @@ def menu():
     def load_existing_game():
         try:
             pet = load_game()
-            root.destroy()
-            window(pet)
+
+            window(root,pet)
         except Exception as e:
             messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
 

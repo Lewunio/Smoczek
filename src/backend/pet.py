@@ -46,7 +46,7 @@ class Pet:
     def eat(self):
         """Karmienie zwierzaka"""
         if self.can_eat:
-            self.hunger = min(self.hunger_level, self.hunger + 20)
+            self.hunger = min(self.hunger_level, self.hunger + 5)
             self.exp += 5
     @property
     def can_eat(self):
