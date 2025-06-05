@@ -27,26 +27,32 @@ class Pet:
         self.exp = exp
         self.hunger_level = hunger_level
         self.happy_level = happy_level
+        self.sleeping = False
 
     def sleep(self):
         """Zwierzak spi"""
-        self.tired = min(100.0, self.tired +20)
-        self.exp += 1
+        self.sleeping = not self.sleeping
+        if self.tired < 95:
+            if self.sleeping:
+                self.tired = min(100.0, self.tired +2)
+                self.exp += 1
 
     def eat(self):
         """Karmienie zwierzaka"""
-        self.hunger = min(self.hunger_level, self.hunger + 20)
-        self.exp += 5
+        if self.hunger < self.hunger_level*0.95:
+            self.hunger = min(self.hunger_level, self.hunger + 20)
+            self.exp += 5
 
     def play(self):
         """
         Zabawa ze zwierzakiem.
         Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
         """
-        self.happy = min(self.happy_level, self.happy + 20)
-        self.tired = max(0.0, self.tired - 10)
-        self.hunger = max(0.0, self.hunger - 10)
-        self.exp += 10
+        if self.happy > self.happy_level*0.95:
+            self.happy = min(self.happy_level, self.happy + 20)
+            self.tired = max(0.0, self.tired - 10)
+            self.hunger = max(0.0, self.hunger - 10)
+            self.exp += 10
     def update_stats(self):
         """
         Aktualizuje status zwierzaka
