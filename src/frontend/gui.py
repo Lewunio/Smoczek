@@ -83,3 +83,6 @@ def menu():
 
     def game():
         pass
+
+    def create_pet():
+        pass

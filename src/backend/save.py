@@ -31,7 +31,7 @@ def save_game(pet: Pet, filename: str):
     except Exception as e:
         print(f"Błąd zapisu: {e}")
 
-def load_game(filename: str) -> Pet:
+def load_game(filename: str) -> dict:
     """
         Wczytuje stan gry z pliku JSON.
 
@@ -39,7 +39,7 @@ def load_game(filename: str) -> Pet:
             filename (str): Nazwa pliku do wczytania.
 
         Returns:
-            Pet: Nowy zwierzak z wczytanym stanem.
+            dict: Dane gry z pliku JSON.
     """
 
     with open(filename, "r") as f:
