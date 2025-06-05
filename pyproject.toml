@@ -3,4 +3,7 @@ name = "smoczek"
 version = "0.1.0"
 description = "tamagochi"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pillow",
+    "tkinter"
+]
