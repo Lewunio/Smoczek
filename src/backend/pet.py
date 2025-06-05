@@ -2,13 +2,13 @@ from datetime import datetime
 
 
 class Pet:
-    def __init__(self, name:str, species:int, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0):
+    def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0):
         """
         Klasa Zwierzaka
 
         Args:
             name(str): Imie zwierzaka
-            species(int): Typ zwierzaka
+            species(str): Typ zwierzaka
             birth(datetime): Data urodzenia
             happy(float): Wskaznik szczescia
             hunger(float): Wskaznik glodu
