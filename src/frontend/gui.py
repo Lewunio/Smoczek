@@ -18,6 +18,14 @@ def window(root, pet):
     root.title("Zwierzak GUI")
     WIDTH, HEIGHT = 1400, 800
 
+
+    def save_on_close():
+        should_save = messagebox.askyesno("Zamknij grę", "Czy chcesz zapisać grę przed wyjściem?",parent=root)
+        if should_save:
+            save_game(pet)
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", save_on_close)
     # tło jaskini
 
     bg_path = "src/frontend/assets/backgrounds/cave.png"
@@ -44,7 +52,6 @@ def window(root, pet):
         font=("Papyrus",120,"bold"),
         anchor="s",
     )
-
 
     def change_pet_image(image_path, duration_ms=1000):
         new_img = Image.open(image_path).resize((400, 400))
