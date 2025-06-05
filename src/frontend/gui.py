@@ -110,12 +110,15 @@ def window(root, pet):
 
 
         elif "eat" in tags:
-            pet.eat()
-            eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
-            if os.path.exists(eating_path):
-                change_pet_image(eating_path, 1000)
+            if not pet.sleeping:
+                pet.eat()
+                eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
+                if os.path.exists(eating_path):
+                    change_pet_image(eating_path, 1000)
         elif "play" in tags:
-            pet.play()
+            if not pet.sleeping:
+                pet.play()
+                game()
         update_labels()
 
     canvas.tag_bind("sleep", "<Button-1>", on_icon_click)
@@ -374,5 +377,5 @@ def menu():
 
     root.mainloop()
 
-    def game():
-        pass
+def game():
+    pass
