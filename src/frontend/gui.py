@@ -63,6 +63,52 @@ from src.backend.save import save_game, load_game
 #     decay_stats()
 #     root.mainloop()
 
+def choose_egg(root, start_game_callback):
+    for widget in root.winfo_children():
+        widget.destroy()
+    root.title("Wybierz swojego podopiecznego")
+    WIDTH, HEIGHT = 1400,800
+
+    bg_path = os.path.join("frontend", "assets", "backgrounds", "cave.png")
+    bg_image = Image.open(bg_path).resize((WIDTH,HEIGHT))
+    bg_photo = ImageTk.PhotoImage(bg_image)
+
+    canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
+    canvas.pack()
+    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+    root.bg_photo = bg_photo
+
+    egg_images = []
+    egg_ids = []
+
+    start_x = 400
+    gap = 200
+
+
+    for i in range(4):
+        path = os.path.join("frontend", "assets", "eggs", f"egg{i+1}.png")
+        img = Image.open(path).resize((200,200))
+        photo = ImageTk.PhotoImage(img)
+        egg_images.append(photo)
+
+        x = start_x + i * gap
+        y = 600
+
+        egg_id = canvas.create_image(x,y,image=photo, anchor="center")
+        egg_ids.append((egg_id, i))
+    canvas.egg_images = egg_images
+    def on_click(event):
+        clicked = canvas.find_closest(event.x, event.y)[0]
+        for egg_id, species_index in egg_ids:
+            if clicked == egg_id:
+                for widget in root.winfo_children():
+                    widget.destroy()
+                start_game_callback(species_index)
+                break
+    canvas.bind("<Button-1>", on_click)
+
+
+
 def make_image_button(canvas, x, y, text, command, image):
     width = 400
     height = 75
@@ -88,8 +134,16 @@ def make_image_button(canvas, x, y, text, command, image):
 def menu():
     root = tk.Tk()
     root.title("Menu Główne")
-    WIDTH, HEIGHT = 1000, 800
+    root.attributes("-topmost", True)
+    WIDTH, HEIGHT = 1400, 800
     root.geometry(f"{WIDTH}x{HEIGHT}")
+    # srodek ekraniu
+    root.update_idletasks()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (WIDTH // 2)
+    y = (screen_height // 2) - (HEIGHT // 2)
+    root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
 
     bg_path = os.path.join("frontend", "assets", "backgrounds", "menu.png")
     bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
@@ -138,7 +192,7 @@ def menu():
     btn_photo = ImageTk.PhotoImage(btn_img)
     canvas.btn_photo = btn_photo  # zapamiętaj referencję!
 
-    make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", start_new_game, btn_photo)
+    make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", lambda: choose_egg(root, start_game_callback=start_new_game), btn_photo)
     make_image_button(canvas, WIDTH // 2, 525, "Wczytaj grę", load_existing_game, btn_photo)
     make_image_button(canvas, WIDTH // 2, 650, "Wyjście", root.destroy, btn_photo)
 
