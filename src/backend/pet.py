@@ -3,9 +3,9 @@ from datetime import datetime
 
 class Pet:
 
-    def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0):
+    def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0, hunger_level:float=100, happy_level:float=100):
         """
-        Klasa Zwierzaka
+        Konstruktor klasy Pet
 
         Args:
             name(str): Imie zwierzaka
@@ -15,6 +15,8 @@ class Pet:
             hunger(float): Wskaznik glodu
             tired(float): Wskaznik zmeczenia
             exp(float): Ilosc doswiadczenia
+            hunger_level(float): Jaki max głodu
+            happy_level(float): Jaki max szczęścia z zabawy
         """
         self.name = name
         self.species = species
@@ -23,17 +25,17 @@ class Pet:
         self.hunger = hunger
         self.tired = tired
         self.exp = exp
-        self.hunger_level = 100
-        self.happy_level = 100
+        self.hunger_level = hunger_level
+        self.happy_level = happy_level
 
     def sleep(self):
         """Zwierzak spi"""
-        self.tired = min(100, self.tired +20)
+        self.tired = min(100.0, self.tired +20)
         self.exp += 5
 
     def eat(self):
         """Karmienie zwierzaka"""
-        self.hunger = min(100, self.hunger + 20)
+        self.hunger = min(100.0, self.hunger + 20)
         self.exp += 5
 
     def play(self):
@@ -41,17 +43,17 @@ class Pet:
         Zabawa ze zwierzakiem.
         Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
         """
-        self.happy = min(100, self.happy + 20)
-        self.tired = max(0, self.tired - 10)
-        self.hunger = max(0, self.hunger - 10)
+        self.happy = min(100.0, self.happy + 20)
+        self.tired = max(0.0, self.tired - 10)
+        self.hunger = max(0.0, self.hunger - 10)
         self.exp += 10
     def update_stats(self):
         """
         Aktualizuje status zwierzaka
         """
-        self.hunger = max(0, self.hunger - 0.5)
-        self.tired = max(0, self.tired - 0.5)
-        self.happy = max(0, self.happy - 0.5)
+        self.hunger = max(0.0, self.hunger - 0.5)
+        self.tired = max(0.0, self.tired - 0.5)
+        self.happy = max(0.0, self.happy - 0.5)
     def pet_settings(self, hunger:float, happy:float):
         """
         Ustalenie max poziomu wartości hunger i happy
@@ -64,6 +66,9 @@ class Pet:
         self.happy_level = happy
 
     def __str__(self):
+        """
+        ToString zwierzaka
+        """
         return (f"Name: {self.name}\n"
                 f"Species: {self.species}\n"
                 f"Birth date: {self.birth}\n"
