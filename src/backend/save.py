@@ -1,10 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .pet import Pet
 
 
-def save_game(pet: Pet, filename: str):
+def save_game(pet: Pet, filename: str="save.json"):
     """
         Zapisuje stan zwierzaka do pliku JSON.
         Przeksztalca dane zwierzaka na dict i zapisuje date.
@@ -23,15 +23,16 @@ def save_game(pet: Pet, filename: str):
             "hunger": pet.hunger,
             "exp": pet.exp,
             "tired": pet.tired,
+            "hunger_level": pet.hunger_level,
+            "happy_level": pet.happy_level,
             "save_date": datetime.today().isoformat()
         }
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
-        print(f"Stan został zapisany do pliku '{filename}'.")
     except Exception as e:
         print(f"Błąd zapisu: {e}")
 
-def load_game(filename: str) -> dict:
+def load_game(filename: str="save.json") -> Pet:
     """
         Wczytuje stan gry z pliku JSON.
 
@@ -39,11 +40,25 @@ def load_game(filename: str) -> dict:
             filename (str): Nazwa pliku do wczytania.
 
         Returns:
-            dict: Dane gry z pliku JSON.
+            Pet: Dane w postaci zwierzecia.
     """
 
     with open(filename, "r") as f:
         data = json.load(f)
     print(f"Gra została wczytana z pliku '{filename}'.")
-    return data
+    pet = Pet(name=data["name"],
+              species=data["species"],
+              birth=data["birth"],
+              happy=data["happy"],
+              hunger=data["hunger"],
+              exp=data["exp"],
+              tired=data["tired"],
+              hunger_level=data["hunger_level"],
+              happy_level=data["happy_level"])
+    time = datetime.fromisoformat(data["save_date"])
+    load_time = datetime.now()
+    while time <= load_time:
+        pet.update_stats()
+        time = time + timedelta(days=1)
+    return pet
     
