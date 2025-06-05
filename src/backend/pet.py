@@ -41,7 +41,8 @@ class Pet:
         while self.sleeping:
             self.tired = min(100.0, self.tired +2)
             sleep(2)
-            self.exp += 1
+            if self.tired != 100:
+                self.exp += 1
     def eat(self):
         """Karmienie zwierzaka"""
         if self.can_eat:
