@@ -54,16 +54,6 @@ class Pet:
         self.hunger = max(0.0, self.hunger - 0.5)
         self.tired = max(0.0, self.tired - 0.5)
         self.happy = max(0.0, self.happy - 0.5)
-    def pet_settings(self, hunger:float, happy:float):
-        """
-        Ustalenie max poziomu wartości hunger i happy
-
-        Args:
-            hunger(float): Jaki max głodu
-            happy(float): Jaki max szczęścia z zabawy
-        """
-        self.hunger_level = hunger
-        self.happy_level = happy
 
     def __str__(self):
         """
