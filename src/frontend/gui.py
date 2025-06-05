@@ -35,7 +35,16 @@ def window(root, pet):
     pet_img = Image.open(pet_image_path).resize((400, 400))  # rozmiar możesz zmienić
     pet_photo = ImageTk.PhotoImage(pet_img)
     canvas.pet_photo = pet_photo  # zapamiętaj referencję
-    canvas.pet_image_id = canvas.create_image(720, 480, image=pet_photo)
+    canvas.pet_image_id = canvas.create_image(WIDTH//2, 480, image=pet_photo)
+    #=== IMIE ===
+    canvas.name_text = canvas.create_text(
+        WIDTH//2, 180,
+        text=pet.name,
+        fill="#efaa32",
+        font=("Papyrus",80,"bold"),
+        anchor="s",
+    )
+
 
     def change_pet_image(image_path, duration_ms=1000):
         new_img = Image.open(image_path).resize((400, 400))
@@ -111,7 +120,7 @@ def window(root, pet):
 
 
         elif "eat" in tags:
-            if not pet.sleeping:
+            if pet.can_eat:
                 pet.eat()
                 eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
                 if os.path.exists(eating_path):
@@ -135,10 +144,10 @@ def window(root, pet):
 
     # Dodaj ikonkę głodu
     canvas.create_image(30, 30, image=hunger_icon, anchor="nw")
-
+    # tutaj
     # Dodaj tekst głodu
     canvas.hunger_value_text = canvas.create_text(
-        130, 50,
+        110, 68,
         text=f"{pet.hunger} / {pet.hunger_level}",
         fill="white",
         font=("Arial", 26, "bold"),
@@ -148,17 +157,17 @@ def window(root, pet):
 
     # pozycja w prawym górnym rogu
     canvas.create_image(WIDTH - 180, 30, image=exp_icon, anchor="ne")
-    canvas.exp_value_text = canvas.create_text(WIDTH - 100, 80, text=str(int(pet.exp)), fill="white",
+    canvas.exp_value_text = canvas.create_text(WIDTH - 150, 80, text=str(int(pet.exp)), fill="white",
                                                font=("Arial", 38, "bold"), anchor="ne")
 
     # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
-    tired_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/grey_hungry_icon.png").resize((80, 80)))
+    tired_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/zmeczenie.png").resize((80, 80)))
     canvas.tired_icon = tired_icon  # zapamiętaj referencję
 
     canvas.create_image(30, 130, image=tired_icon, anchor="nw")  # niżej o 100px
 
     canvas.tired_value_text = canvas.create_text(
-        130, 150,
+        110, 168, #tutaj
         text=f"{int(pet.tired)} / 100",
         fill="white",
         font=("Arial", 26, "bold"),
