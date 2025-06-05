@@ -362,9 +362,18 @@ def load_existing_game(root):
     except Exception as e:
         messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
 def game(root, pet):
+    root.update_idletasks()  # odśwież dane geometryczne
+    geometry = root.geometry()  # np. "1400x800+100+200"
+    size, x, y = geometry.split('+')
+    x, y = int(x), int(y)
+
+    # Ukryj główne okno
     root.withdraw()
+
+    # Utwórz nowe okno gry
     game_window = tk.Toplevel(root)
     game_window.title("DinoGame")
+    game_window.geometry(f"1400x800+{x}+{y}")
 
     def back_to_main():
         root.deiconify()
