@@ -1,9 +1,9 @@
 import tkinter as tk
 import random
-from traceback import print_tb
 
 from PIL import Image, ImageTk
 from src.backend.pet import Pet
+from gui import make_image_button
 
 WINDOW_WIDTH = 1400
 WINDOW_HEIGHT = 800
@@ -13,12 +13,14 @@ INITIAL_SPEED = 10
 
 class DinoGame:
     def __init__(self, root,pet:Pet):
+
+        self.ui_elements = []
         self.pet = pet
         self.root = root
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.resizable(False, False)
         self.root.title("Dino Gra")
-
+        self.root.protocol("WM_DELETE_WINDOW", self.disable_close)
         # Tło
         self.bg_image_pil = Image.open("assets/backgrounds/cave.png")
         self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -30,6 +32,8 @@ class DinoGame:
         self.canvas.tag_lower("background")
         self.root.bg_photo = self.bg_photo
 
+        button_bg = Image.open("assets/backgrounds/button_background.png").resize((400, 75))
+        self.button_image = ImageTk.PhotoImage(button_bg)
         # Dinozaur – większy, przesunięty do środka
         original_img = Image.open("assets/reddragon/running_pet.png")
         resized_img = original_img.resize((80, 80), Image.Resampling.LANCZOS)
@@ -60,6 +64,8 @@ class DinoGame:
         self.update_game()
         self.increase_speed()
 
+    def disable_close(self):
+        pass
     def jump(self, event=None):
         if not self.is_jumping and self.game_running:
             self.is_jumping = True
@@ -120,22 +126,32 @@ class DinoGame:
         self.game_over_text = self.canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 30,
                                                       text="GAME OVER", font=("Arial", 36, "bold"), fill="red")
 
-        for _ in range(int(self.final_score/10+1)):
+        for _ in range(int(self.score/10+1)):
             self.pet.play()
         self.show_game_over_options()
 
     def show_game_over_options(self):
-        self.retry_frame = tk.Frame(self.root, bg="white")
-        self.retry_frame.place(relx=0.5, rely=0.6, anchor="center")
+        # Wczytanie tła przycisków
 
-        retry_btn = tk.Button(self.retry_frame, text="Zagraj ponownie", command=self.restart_game)
-        retry_btn.pack(side="left", padx=10)
+        self.root.button_image = self.button_image  # zabezpieczenie przed GC
 
-        quit_btn = tk.Button(self.retry_frame, text="Zamknij", command=self.quit_game)
-        quit_btn.pack(side="right", padx=10)
+        # Pozycje przycisków na środku
+        center_x = WINDOW_WIDTH // 2
+        center_y = WINDOW_HEIGHT // 2 + 80
+
+        # Przyciski: „Zagraj ponownie” i „Zamknij”
+        bt1 = make_image_button(self.canvas, center_x - 220, center_y,
+                               "Zagraj ponownie", self.restart_game, self.button_image)
+        self.ui_elements.extend(bt1)  # placeholder
+
+        bt2 = make_image_button(self.canvas, center_x + 220, center_y,
+                               "Zamknij", self.quit_game, self.button_image)
+        self.ui_elements.extend(bt2)  # placeholder
 
     def restart_game(self):
-        self.retry_frame.destroy()
+        for i in self.ui_elements:
+            self.canvas.delete(i)  # najprościej: usuń wszystko z canvas
+        self.ui_elements.clear()
 
         for obstacle in self.obstacles:
             self.canvas.delete(obstacle)
