@@ -59,7 +59,8 @@ class Pet:
         """
         self.hunger = max(0.0, self.hunger - 0.5)
         self.tired = max(0.0, self.tired - 0.5)
-        self.happy = max(0.0, self.happy - 0.5)
+        if not self.sleeping:
+            self.happy = max(0.0, self.happy - 0.5)
 
     def __str__(self):
         """
