@@ -64,7 +64,6 @@ chosen_species_package = None
 #     root.mainloop()
 
 def choose_egg(root, start_game_callback):
-
     for widget in root.winfo_children():
         widget.destroy()
 
@@ -80,17 +79,45 @@ def choose_egg(root, start_game_callback):
     canvas.create_image(0, 0, image=bg_photo, anchor="nw")
     root.bg_photo = bg_photo  # żeby nie wyczyściło obrazka z pamięci
 
+    placeholder_text = "Podaj imie zwierzaka"
+    entry_width = 30
 
-    entry_label = tk.Label(canvas, text="Imię zwierzaka:", font=("Arial", 16), bg="black", fg="white")
-    canvas.create_window(WIDTH // 2 - 150, 50, anchor="nw", window=entry_label)
+    # Tworzymy ramkę do trzymania entry
+    entry_frame = tk.Frame(root, bg="black")
+    name_entry = tk.Entry(
+        entry_frame,
+        font=("Arial", 20, "italic"),
+        fg="gray",
+        bg="black",
+        insertbackground="white",
+        width=30,
+        bd=4,
+        relief="ridge",
+        justify="center"
+    )
+    name_entry.pack()
 
-    name_entry = tk.Entry(canvas, font=("Arial", 16), bg="black", fg="white", insertbackground="white")
-    canvas.create_window(WIDTH // 2 - 150, 80, anchor="nw", window=name_entry)
+    # Dodajemy placeholder
+    placeholder_text = "Podaj imie zwierzaka"
+    name_entry.insert(0, placeholder_text)
 
-    name_entry = tk.Entry(root, font=("Arial", 16), bg="black", fg="white", insertbackground="white")
-    name_entry_window = canvas.create_window(WIDTH // 2 - 150, 80, anchor="nw", window=name_entry)
+    def on_entry_focus_in(event):
+        if name_entry.get() == placeholder_text:
+            name_entry.delete(0, tk.END)
+            name_entry.config(font=("Arial", 20, "normal"), fg="white")
 
+    def on_entry_focus_out(event):
+        if name_entry.get().strip() == "":
+            name_entry.insert(0, placeholder_text)
+            name_entry.config(font=("Arial", 20, "italic"), fg="gray")
 
+    name_entry.bind("<FocusIn>", on_entry_focus_in)
+    name_entry.bind("<FocusOut>", on_entry_focus_out)
+
+    # Umieszczamy całą ramkę na canvasie
+    canvas.create_window(WIDTH // 2, 100, window=entry_frame)
+
+    # === Jajka ===
     egg_images = []
     egg_ids = []
 
@@ -114,15 +141,12 @@ def choose_egg(root, start_game_callback):
     canvas.egg_images = egg_images
 
     def on_click(event):
-        global chosen_species_package  # ← dodane to!
+        global chosen_species_package
         clicked = canvas.find_closest(event.x, event.y)[0]
         for egg_id, species_index in egg_ids:
             if clicked == egg_id:
-                chosen_species_package = species_packages[species_index]  # ← teraz ustawia lokalną globalną
-                for widget in root.winfo_children():
-                    widget.destroy()
-                name = name_entry.get()
-                if not name:
+                name = name_entry.get().strip()
+                if name == "" or name == placeholder_text:
                     messagebox.showwarning("Błąd", "Podaj imię zwierzaka przed wyborem jajka!")
                     return
                 chosen_species_package = species_packages[species_index]
@@ -132,6 +156,7 @@ def choose_egg(root, start_game_callback):
                 break
 
     canvas.bind("<Button-1>", on_click)
+
 
 def make_image_button(canvas, x, y, text, command, image):
     width = 400
