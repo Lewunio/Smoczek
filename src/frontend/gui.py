@@ -3,6 +3,7 @@ from tkinter import simpledialog, messagebox
 from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
 
+
 def window(pet):
 
     root = tk.Tk()
@@ -79,3 +80,6 @@ def menu():
     tk.Button(root, text="❌ Wyjście", command=root.destroy, width=20).pack(pady=5)
 
     root.mainloop()
+
+    def game():
+        pass
