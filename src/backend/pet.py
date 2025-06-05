@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 
 
@@ -32,11 +33,13 @@ class Pet:
     def sleep(self):
         """Zwierzak spi"""
         self.sleeping = not self.sleeping
+        th = threading.Thread(target=self.sleep_thread).start()
 
+
+    def sleep_thread(self):
         while self.sleeping:
             self.tired = min(100.0, self.tired +2)
             self.exp += 1
-
     def eat(self):
         """Karmienie zwierzaka"""
         if self.can_eat:
