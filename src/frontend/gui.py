@@ -4,6 +4,8 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
+from .tools import make_image_button
+from .game import DinoGame
 
 chosen_species_package = None
 required_food = None
@@ -116,7 +118,7 @@ def window(root, pet):
                     change_pet_image(eating_path, 1000)
         elif "play" in tags:
             if not pet.sleeping:
-                game(pet)
+                game(root,pet)
         update_labels()
 
     canvas.tag_bind("sleep", "<Button-1>", on_icon_click)
@@ -285,28 +287,7 @@ def choose_egg(root, start_game_callback):
     canvas.bind("<Button-1>", on_click)
 
 
-def make_image_button(canvas, x, y, text, command, image):
-    width = 400
-    height = 75
-    ramka = canvas.create_rectangle(
-        x - width // 2 - 4, y - height // 2 - 4,
-        x + width // 2 + 4, y + height // 2 + 4,
-        outline="#4c2306", width=6  # kolor i grubość obramowania
-    )
 
-
-    button = tk.Button(
-        canvas,
-        text=text,
-        image=image,
-        compound="center",
-        font=("Arial", 30, "bold"),
-        fg="#4c2406",
-        borderwidth=0,
-        highlightthickness=0,
-        command=command
-    )
-    return [canvas.create_window(x,y,window=button), ramka]
 def menu():
     root = tk.Tk()
     root.title("Menu Główne")
@@ -338,42 +319,24 @@ def menu():
     canvas.logo_photo = logo_photo
     canvas.create_image(WIDTH//2,200,image=logo_photo, anchor="center")
 
-    def start_new_game():
-        name = simpledialog.askstring("Nowa gra", "Podaj imię zwierzaka:")
-        if not name:
-            return
-        species = simpledialog.askstring("Nowa gra", "Podaj gatunek:")
-        if not species:
-            return
-        pet = Pet(name, species)
-        root.destroy()
-        window(pet)
 
-    def load_existing_game():
-        try:
-            pet = load_game()
 
-            window(root,pet)
-        except Exception as e:
-            messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
-
-    button_style = {
-        "bg": "#ffffff",
-        "fg": "#333333",
-        "font": ("Arial", 12, "bold"),
-        "width": 20,
-        "relief": "raised"
-    }
     btn_path = "src/frontend/assets/backgrounds/button_background.png"
     btn_img = Image.open(btn_path).resize((400, 75))
     btn_photo = ImageTk.PhotoImage(btn_img)
     canvas.btn_photo = btn_photo  # zapamiętaj referencję!
 
     make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", lambda: choose_egg(root, start_game_callback=lambda pet: window(root, pet)), btn_photo)
-    make_image_button(canvas, WIDTH // 2, 525, "Wczytaj grę", load_existing_game, btn_photo)
+    make_image_button(canvas, WIDTH // 2, 525, "Wczytaj grę", lambda: load_existing_game(root), btn_photo)
     make_image_button(canvas, WIDTH // 2, 650, "Wyjście", root.destroy, btn_photo)
 
     root.mainloop()
-
-def game(pet):
-    pass
+def load_existing_game(root):
+    try:
+        pet = load_game()
+        window(root,pet)
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
+def game(root, pet):
+    DinoGame(root,pet)
+    window(root,pet)
