@@ -7,7 +7,7 @@ from gui import make_image_button
 
 WINDOW_WIDTH = 1400
 WINDOW_HEIGHT = 800
-GROUND_Y = 500
+GROUND_Y = 700
 OBSTACLE_INTERVAL = 2000  # ms
 INITIAL_SPEED = 10
 
@@ -22,7 +22,7 @@ class DinoGame:
         self.root.title("Dino Gra")
         self.root.protocol("WM_DELETE_WINDOW", self.disable_close)
         # Tło
-        self.bg_image_pil = Image.open("assets/backgrounds/cave.png")
+        self.bg_image_pil = Image.open("assets/backgrounds/game_cave.png")
         self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.bg_photo = ImageTk.PhotoImage(self.bg_resized)
 
