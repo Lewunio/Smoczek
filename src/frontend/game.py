@@ -46,6 +46,9 @@ class DinoGame:
         self.canvas.tag_lower("background")
         self.root.bg_photo = self.bg_photo
 
+        # Game over - ikonka
+        game_over_img = Image.open("src/frontend/assets/items/gameover.png").resize((300,300))
+        self.game_over_img = ImageTk.PhotoImage(game_over_img)
         # Przyciski – tło
         button_bg = Image.open("src/frontend/assets/backgrounds/button_background.png").resize((400, 75))
         self.button_image = ImageTk.PhotoImage(button_bg)
@@ -159,8 +162,8 @@ class DinoGame:
     def game_over(self):
         """Obsługa końca gry"""
         self.game_running = False
-        self.game_over_text = self.canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 30,
-                                                      text="GAME OVER", font=("Arial", 36, "bold"), fill="red")
+        self.game_over_text = self.canvas.create_image(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 100,
+                                                       image=self.game_over_img, anchor="center")
 
         # Zwiększenie radości smoka
         for _ in range(self.score // 5 + 1):
