@@ -38,6 +38,7 @@ class Pet:
 
 
     def sleep_thread(self):
+        """Płynna aktualizacja"""
         while self.sleeping:
             self.tired = min(100.0, self.tired +2)
             if self.tired != 100:
