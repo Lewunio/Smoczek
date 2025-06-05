@@ -38,10 +38,10 @@ def window(root, pet):
     canvas.pet_image_id = canvas.create_image(WIDTH//2, 480, image=pet_photo)
     #=== IMIE ===
     canvas.name_text = canvas.create_text(
-        WIDTH//2, 180,
+        WIDTH//2, 200,
         text=pet.name,
-        fill="#efaa32",
-        font=("Papyrus",80,"bold"),
+        fill="#8a3115",
+        font=("Papyrus",120,"bold"),
         anchor="s",
     )
 
@@ -149,17 +149,17 @@ def window(root, pet):
     # tutaj
     # Dodaj tekst głodu
     canvas.hunger_value_text = canvas.create_text(
-        110, 68,
+        120, 68,
         text=f"{pet.hunger} / {pet.hunger_level}",
-        fill="white",
-        font=("Arial", 26, "bold"),
+        fill="#efaa32",
+        font=("Papyrus", 46, "bold"),
         anchor="w"
     )
 
 
     # pozycja w prawym górnym rogu
     canvas.create_image(WIDTH - 180, 30, image=exp_icon, anchor="ne")
-    canvas.exp_value_text = canvas.create_text(WIDTH - 150, 80, text=str(int(pet.exp)), fill="white",
+    canvas.exp_value_text = canvas.create_text(WIDTH - 120, 80, text=str(int(pet.exp)), fill="#06acc5",
                                                font=("Arial", 38, "bold"), anchor="ne")
 
     # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
@@ -169,23 +169,23 @@ def window(root, pet):
     canvas.create_image(30, 130, image=tired_icon, anchor="nw")  # niżej o 100px
 
     canvas.tired_value_text = canvas.create_text(
-        110, 168, #tutaj
+        120, 173, #tutaj
         text=f"{int(pet.tired)} / 100",
-        fill="white",
-        font=("Arial", 26, "bold"),
+        fill="#efaa32",
+        font=("Papyrus", 46, "bold"),
         anchor="w"
     )
     # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
-    happy_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/zmeczenie.png").resize((80, 80)))
+    happy_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/happy.png").resize((80, 80)))
     canvas.happy_icon = happy_icon  # zapamiętaj referencję
 
-    canvas.create_image(30, 130, image=happy_icon, anchor="nw")  # niżej o 100px
+    canvas.create_image(30, 216, image=happy_icon, anchor="nw")  # niżej o 100px
 
     canvas.happy_icon_text = canvas.create_text(
-        110, 258,  # tutaj
-        text=f"{int(pet.happy)} / {int(pet.happy_level)})",
-        fill="white",
-        font=("Arial", 26, "bold"),
+        120, 260,  # tutaj
+        text=f"{int(pet.happy)} / {int(pet.happy_level)}",
+        fill="#efaa32",
+        font=("Papyrus", 46, "bold"),
         anchor="w"
     )
 
@@ -304,8 +304,8 @@ def choose_egg(root, start_game_callback):
 
                 chosen_species_package = species_packages[species_index]
                 required_food = int(food_str)
-                play_time_required = int(play_str)
-                pet = Pet(name=name, species=chosen_species_package, hunger_level=required_food)
+                happy_level = int(play_str)
+                pet = Pet(name=name, species=chosen_species_package, hunger_level=required_food, happy_level=happy_level)
                 start_game_callback(pet)
 
     canvas.bind("<Button-1>", on_click)
