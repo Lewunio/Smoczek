@@ -22,7 +22,7 @@ class Pet:
         self.species = species
         self.birth = birth
         self.happy = happy
-        self.hunger = hunger
+        self.hunger = hunger_level
         self.tired = tired
         self.exp = exp
         self.hunger_level = hunger_level
@@ -35,7 +35,7 @@ class Pet:
 
     def eat(self):
         """Karmienie zwierzaka"""
-        self.hunger = min(100.0, self.hunger + 20)
+        self.hunger = min(self.hunger_level, self.hunger + 20)
         self.exp += 5
 
     def play(self):
@@ -43,7 +43,7 @@ class Pet:
         Zabawa ze zwierzakiem.
         Zwieksza wskaznik szczescia i zmniejsza najedzenie i zwieksza sennosc.
         """
-        self.happy = min(100.0, self.happy + 20)
+        self.happy = min(self.happy_level, self.happy + 20)
         self.tired = max(0.0, self.tired - 10)
         self.hunger = max(0.0, self.hunger - 10)
         self.exp += 10
