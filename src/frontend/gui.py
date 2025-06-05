@@ -33,36 +33,38 @@ def window(root, pet):
     pet_img = Image.open(pet_image_path).resize((400, 400))  # rozmiar możesz zmienić
     pet_photo = ImageTk.PhotoImage(pet_img)
     canvas.pet_photo = pet_photo  # zapamiętaj referencję
-    canvas.create_image(720, 480, image=pet_photo)
+    canvas.pet_image_id = canvas.create_image(720, 480, image=pet_photo)
 
-    # === INFOKA ===
-    info_frame = tk.Frame(root, bg="#ffffff")
-    canvas.create_window(50, 50, anchor="nw", window=info_frame)
+    def change_pet_image(image_path, duration_ms=1000):
+        new_img = Image.open(image_path).resize((400, 400))
+        new_photo = ImageTk.PhotoImage(new_img)
+        canvas.pet_photo = new_photo
+        canvas.itemconfig(canvas.pet_image_id, image=new_photo)
 
-    name_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    species_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    birth_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    happy_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    hunger_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    tired_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
-    exp_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+        # Po upływie czasu wróć do podstawowego obrazka
+        def revert_image():
+            static_path = f"src/frontend/assets/{pet.species}/static_pet.png"
+            static_img = Image.open(static_path).resize((400, 400))
+            static_photo = ImageTk.PhotoImage(static_img)
+            canvas.pet_photo = static_photo
+            canvas.itemconfig(canvas.pet_image_id, image=static_photo)
 
-    for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
-        label.pack(anchor="w")
+        canvas.after(duration_ms, revert_image)
+
+
+
 
     def update_labels():
-        name_label.config(text=f"Imię: {pet.name}")
-        species_label.config(text=f"Gatunek: {pet.species}")
-        birth_label.config(text=f"Urodzony: {pet.birth}")
-        happy_label.config(text=f"❤️ Szczęście: {pet.happy}/100")
-        hunger_label.config(text=f"🍗 Głód: {pet.hunger}/100")
-        tired_label.config(text=f"😴 Zmęczenie: {pet.tired}/100")
-        exp_label.config(text=f"⭐ Doświadczenie: {pet.exp}")
+        canvas.itemconfig(canvas.exp_value_text, text=str(int(pet.exp)))
+        canvas.itemconfig(canvas.hunger_value_text, text=f"{int(pet.hunger)} / {int(pet.hunger_level)}")
+
+
 
     def decay_stats():
         pet.update_stats()
         update_labels()
         root.after(3000, decay_stats)
+
 
     # === PRZYCISKI ===
     # === PRZYCISKI-GRAFIKI ===
@@ -89,6 +91,9 @@ def window(root, pet):
             pet.sleep()
         elif "eat" in tags:
             pet.eat()
+            eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
+            if os.path.exists(eating_path):
+                change_pet_image(eating_path, 1000)
         elif "play" in tags:
             pet.play()
         update_labels()
@@ -97,8 +102,36 @@ def window(root, pet):
     canvas.tag_bind("eat", "<Button-1>", on_icon_click)
     canvas.tag_bind("play", "<Button-1>", on_icon_click)
 
+
+    exp_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/exp.png").resize((120, 120)))
+    canvas.exp_icon = exp_icon  # referencja żeby nie znikło
+
+    # === HUNGER (GŁÓD) W LEWYM GÓRNYM ROGU ===
+    hunger_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/hungry_icon.png").resize((80, 80)))
+    canvas.hunger_icon = hunger_icon  # zapamiętaj referencję
+
+    # Dodaj ikonkę głodu
+    canvas.create_image(30, 30, image=hunger_icon, anchor="nw")
+
+    # Dodaj tekst głodu
+    canvas.hunger_value_text = canvas.create_text(
+        130, 50,
+        text=f"{pet.hunger} / {pet.hunger_level}",
+        fill="white",
+        font=("Arial", 26, "bold"),
+        anchor="w"
+    )
+
+
+    # pozycja w prawym górnym rogu
+    canvas.create_image(WIDTH - 180, 30, image=exp_icon, anchor="ne")
+    canvas.exp_value_text = canvas.create_text(WIDTH - 100, 80, text=str(int(pet.exp)), fill="white",
+                                               font=("Arial", 38, "bold"), anchor="ne")
+
     update_labels()
     decay_stats()
+
+
 
 def choose_egg(root, start_game_callback):
     for widget in root.winfo_children():
@@ -208,12 +241,11 @@ def choose_egg(root, start_game_callback):
                     messagebox.showwarning("Błąd", "Podaj poprawny czas zabawy (liczba całkowita w sekundach)!")
                     return
 
-                global chosen_species_package, required_food, play_time_required
                 chosen_species_package = species_packages[species_index]
                 required_food = int(food_str)
                 play_time_required = int(play_str)
-                pet = Pet(name, chosen_species_package)
-                window(root, pet)
+                pet = Pet(name, chosen_species_package, hunger_level=required_food)
+                start_game_callback(pet)
 
     canvas.bind("<Button-1>", on_click)
 
