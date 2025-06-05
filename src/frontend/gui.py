@@ -6,7 +6,7 @@ from tkinter import simpledialog, messagebox
 from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
 
-
+chosen_species_package = None
 # def window(pet):
 #
 #     root = tk.Tk()
@@ -64,19 +64,32 @@ from src.backend.save import save_game, load_game
 #     root.mainloop()
 
 def choose_egg(root, start_game_callback):
+
     for widget in root.winfo_children():
         widget.destroy()
+
     root.title("Wybierz swojego podopiecznego")
-    WIDTH, HEIGHT = 1400,800
+    WIDTH, HEIGHT = 1400, 800
 
     bg_path = os.path.join("frontend", "assets", "backgrounds", "cave.png")
-    bg_image = Image.open(bg_path).resize((WIDTH,HEIGHT))
+    bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
     bg_photo = ImageTk.PhotoImage(bg_image)
 
     canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack()
     canvas.create_image(0, 0, image=bg_photo, anchor="nw")
-    root.bg_photo = bg_photo
+    root.bg_photo = bg_photo  # żeby nie wyczyściło obrazka z pamięci
+
+
+    entry_label = tk.Label(canvas, text="Imię zwierzaka:", font=("Arial", 16), bg="black", fg="white")
+    canvas.create_window(WIDTH // 2 - 150, 50, anchor="nw", window=entry_label)
+
+    name_entry = tk.Entry(canvas, font=("Arial", 16), bg="black", fg="white", insertbackground="white")
+    canvas.create_window(WIDTH // 2 - 150, 80, anchor="nw", window=name_entry)
+
+    name_entry = tk.Entry(root, font=("Arial", 16), bg="black", fg="white", insertbackground="white")
+    name_entry_window = canvas.create_window(WIDTH // 2 - 150, 80, anchor="nw", window=name_entry)
+
 
     egg_images = []
     egg_ids = []
@@ -84,30 +97,41 @@ def choose_egg(root, start_game_callback):
     start_x = 400
     gap = 200
 
+    species_packages = ["dragon", "phoenix", "griffin", "unicorn"]
 
     for i in range(4):
-        path = os.path.join("frontend", "assets", "eggs", f"egg{i+1}.png")
-        img = Image.open(path).resize((200,200))
+        path = os.path.join("frontend", "assets", "eggs", f"egg{i + 1}.png")
+        img = Image.open(path).resize((200, 200))
         photo = ImageTk.PhotoImage(img)
         egg_images.append(photo)
 
         x = start_x + i * gap
         y = 600
 
-        egg_id = canvas.create_image(x,y,image=photo, anchor="center")
+        egg_id = canvas.create_image(x, y, image=photo, anchor="center")
         egg_ids.append((egg_id, i))
+
     canvas.egg_images = egg_images
+
     def on_click(event):
+        global chosen_species_package  # ← dodane to!
         clicked = canvas.find_closest(event.x, event.y)[0]
         for egg_id, species_index in egg_ids:
             if clicked == egg_id:
+                chosen_species_package = species_packages[species_index]  # ← teraz ustawia lokalną globalną
                 for widget in root.winfo_children():
                     widget.destroy()
-                start_game_callback(species_index)
+                name = name_entry.get()
+                if not name:
+                    messagebox.showwarning("Błąd", "Podaj imię zwierzaka przed wyborem jajka!")
+                    return
+                chosen_species_package = species_packages[species_index]
+                pet = Pet(name, chosen_species_package)
+                root.destroy()
+                start_game_callback(pet)
                 break
+
     canvas.bind("<Button-1>", on_click)
-
-
 
 def make_image_button(canvas, x, y, text, command, image):
     width = 400
@@ -137,6 +161,7 @@ def menu():
     root.attributes("-topmost", True)
     WIDTH, HEIGHT = 1400, 800
     root.geometry(f"{WIDTH}x{HEIGHT}")
+
     # srodek ekraniu
     root.update_idletasks()
     screen_width = root.winfo_screenwidth()
