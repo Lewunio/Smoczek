@@ -2,6 +2,7 @@ from datetime import datetime
 
 
 class Pet:
+
     def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0):
         """
         Klasa Zwierzaka
@@ -22,6 +23,8 @@ class Pet:
         self.hunger = hunger
         self.tired = tired
         self.exp = exp
+        self.hunger_level = 100
+        self.happy_level = 100
 
     def sleep(self):
         """Zwierzak spi"""
@@ -43,9 +46,16 @@ class Pet:
         self.hunger = max(0, self.hunger - 10)
         self.exp += 10
     def update_stats(self):
+        """
+        Aktualizuje status zwierzaka
+        """
         self.hunger = max(0, self.hunger - 0.5)
         self.tired = max(0, self.tired - 0.5)
         self.happy = max(0, self.happy - 0.5)
+    def pet_settings(self, hunger:float, happy:float):
+        self.hunger_level = hunger
+        self.happy_level = happy
+
     def __str__(self):
         return (f"Name: {self.name}\n"
                 f"Species: {self.species}\n"
