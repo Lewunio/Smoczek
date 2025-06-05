@@ -32,10 +32,10 @@ class Pet:
     def sleep(self):
         """Zwierzak spi"""
         self.sleeping = not self.sleeping
-        if self.tired != 100:
-            if self.sleeping:
-                self.tired = min(100.0, self.tired +2)
-                self.exp += 1
+
+        if self.sleeping:
+            self.tired = min(100.0, self.tired +2)
+            self.exp += 1
 
     def eat(self):
         """Karmienie zwierzaka"""
