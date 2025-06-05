@@ -1,5 +1,4 @@
 import os.path
-import tkinter as tk
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import simpledialog, messagebox
@@ -117,8 +116,7 @@ def window(root, pet):
                     change_pet_image(eating_path, 1000)
         elif "play" in tags:
             if not pet.sleeping:
-                pet.play()
-                game()
+                game(pet)
         update_labels()
 
     canvas.tag_bind("sleep", "<Button-1>", on_icon_click)
@@ -377,5 +375,5 @@ def menu():
 
     root.mainloop()
 
-def game():
+def game(pet):
     pass

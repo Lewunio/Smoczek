@@ -2,7 +2,7 @@ import tkinter as tk
 import random
 from PIL import Image, ImageTk
 from src.backend.pet import Pet
-from gui import make_image_button
+from .gui import make_image_button
 
 # Stałe konfiguracyjne gry
 WINDOW_WIDTH = 1400
