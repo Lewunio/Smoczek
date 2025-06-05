@@ -20,7 +20,7 @@ class DinoGame:
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.resizable(False, False)
         self.root.title("Dino Gra")
-
+        self.root.protocol("WM_DELETE_WINDOW", self.disable_close)
         # Tło
         self.bg_image_pil = Image.open("assets/backgrounds/cave.png")
         self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -64,6 +64,8 @@ class DinoGame:
         self.update_game()
         self.increase_speed()
 
+    def disable_close(self):
+        pass
     def jump(self, event=None):
         if not self.is_jumping and self.game_running:
             self.is_jumping = True
