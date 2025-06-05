@@ -1,12 +1,12 @@
 {
-    "name": "s",
-    "species": "reddragon",
-    "birth": "2025-06-05 22:26:42.273273",
-    "happy": 99.0,
-    "hunger": 1.0,
-    "exp": 60,
+    "name": "as",
+    "species": "tiger",
+    "birth": "2025-06-06 01:11:47.380976",
+    "happy": 98.5,
+    "hunger": 0.0,
+    "exp": 190,
     "tired": 0.0,
     "hunger_level": 100,
     "happy_level": 100,
-    "save_date": "2025-06-06T00:37:59.938408"
+    "save_date": "2025-06-06T01:37:59.470613"
 }
