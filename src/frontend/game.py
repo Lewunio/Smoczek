@@ -8,9 +8,13 @@ from gui import make_image_button
 WINDOW_WIDTH = 1400
 WINDOW_HEIGHT = 800
 GROUND_Y = 700
-OBSTACLE_INTERVAL = 2000  # ms
+OBSTACLE_INTERVAL = 7000  # ms
 INITIAL_SPEED = 10
-
+P_SIZE = 200
+O_SIZE = 100
+JUMP_HEIGHT = -40
+DOWN_SPEED = 2
+TOLERANCE = 40
 class DinoGame:
     def __init__(self, root_given,pet_given:Pet):
 
@@ -38,18 +42,18 @@ class DinoGame:
         #Obstacles img
 
         self.big_spike_img = ImageTk.PhotoImage(
-            Image.open("assets/items/big_spike.png").resize((100,150))
+            Image.open("assets/items/big_spike.png").resize((O_SIZE*2,O_SIZE*3))
         )
         self.mid_spike_img = ImageTk.PhotoImage(
-            Image.open("assets/items/mid_spike.png").resize((100, 100))
+            Image.open("assets/items/mid_spike.png").resize((O_SIZE*2, O_SIZE*2))
         )
         self.rock_img = ImageTk.PhotoImage(
-            Image.open("assets/items/rock.png").resize((50,50))
+            Image.open("assets/items/rock.png").resize((O_SIZE,O_SIZE))
         )
         self.obstacle_imgs = [self.big_spike_img, self.mid_spike_img, self.rock_img]
         # Dinozaur – większy, przesunięty do środka
         original_img = Image.open("assets/reddragon/running_pet.png")
-        resized_img = original_img.resize((80, 80), Image.Resampling.LANCZOS)
+        resized_img = original_img.resize((P_SIZE, P_SIZE), Image.Resampling.LANCZOS)
         self.dino_img = ImageTk.PhotoImage(resized_img)
         self.root.dino_img = self.dino_img
         self.dino_x = 300
@@ -82,7 +86,7 @@ class DinoGame:
     def jump(self, event=None):
         if not self.is_jumping and self.game_running:
             self.is_jumping = True
-            self.jump_velocity = -25  # wyższy skok
+            self.jump_velocity = JUMP_HEIGHT # wyższy skok
 
 
     def spawn_obstacle(self):
@@ -91,7 +95,7 @@ class DinoGame:
         x = WINDOW_WIDTH
         y = GROUND_Y
         rand = random.randint(0, 2)
-        obstacle = self.canvas.create_image(x, y+5  , image=self.obstacle_imgs[rand], anchor="sw")
+        obstacle = self.canvas.create_image(x, y+70   , image=self.obstacle_imgs[rand], anchor="sw")
         self.obstacles.append(obstacle)
         self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
 
@@ -101,7 +105,7 @@ class DinoGame:
 
         # Grawitacja i skok
         if self.is_jumping:
-            self.jump_velocity += 1.7  # szybciej opada
+            self.jump_velocity += DOWN_SPEED  # szybciej opada
             self.dino_y += self.jump_velocity
             if self.dino_y >= GROUND_Y:
                 self.dino_y = GROUND_Y
@@ -131,7 +135,7 @@ class DinoGame:
     def check_collision(self, dino, obstacle):
         dino_coords = self.canvas.bbox(dino)
         obs_coords = self.canvas.bbox(obstacle)
-        tolerance = 10
+        tolerance = TOLERANCE
 
         return (
                 dino_coords[2] - tolerance > obs_coords[0] + tolerance and
