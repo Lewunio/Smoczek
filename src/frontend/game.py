@@ -17,14 +17,16 @@ DOWN_SPEED = 2
 TOLERANCE = 40  # tolerancja kolizji
 
 class DinoGame:
-    def __init__(self, root_given, pet_given: Pet):
+    def __init__(self, root_given, pet_given: Pet,on_close_callback=None):
         """
         Inicjalizacja podstawowych zmiennych i ustawień okna gry
 
         Args:
             root_given: root do okna
             pet_given: Postac gry
+            on_close_callback: callback function
         """
+        self.on_close_callback = on_close_callback
         self.ui_elements = []
         self.pet = pet_given
         self.root = root_given
@@ -34,7 +36,7 @@ class DinoGame:
         self.root.protocol("WM_DELETE_WINDOW", self.disable_close)
 
         # Ustawienie tła
-        self.bg_image_pil = Image.open("assets/backgrounds/game_cave.png")
+        self.bg_image_pil = Image.open("src/frontend/assets/backgrounds/game_cave.png")
         self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.bg_photo = ImageTk.PhotoImage(self.bg_resized)
 
@@ -45,17 +47,17 @@ class DinoGame:
         self.root.bg_photo = self.bg_photo
 
         # Przyciski – tło
-        button_bg = Image.open("assets/backgrounds/button_background.png").resize((400, 75))
+        button_bg = Image.open("src/frontend/assets/backgrounds/button_background.png").resize((400, 75))
         self.button_image = ImageTk.PhotoImage(button_bg)
 
         # Wczytanie grafik przeszkód
-        self.big_spike_img = ImageTk.PhotoImage(Image.open("assets/items/big_spike.png").resize((O_SIZE * 2, O_SIZE * 3)))
-        self.mid_spike_img = ImageTk.PhotoImage(Image.open("assets/items/mid_spike.png").resize((O_SIZE * 2, O_SIZE * 2)))
-        self.rock_img = ImageTk.PhotoImage(Image.open("assets/items/rock.png").resize((O_SIZE, O_SIZE)))
+        self.big_spike_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/big_spike.png").resize((O_SIZE * 2, O_SIZE * 3)))
+        self.mid_spike_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/mid_spike.png").resize((O_SIZE * 2, O_SIZE * 2)))
+        self.rock_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/rock.png").resize((O_SIZE, O_SIZE)))
         self.obstacle_imgs = [self.big_spike_img, self.mid_spike_img, self.rock_img]
 
         # Wczytanie grafiki dinozaura
-        original_img = Image.open("assets/reddragon/running_pet.png")
+        original_img = Image.open("src/frontend/assets/reddragon/running_pet.png")
         resized_img = original_img.resize((P_SIZE, P_SIZE), Image.Resampling.LANCZOS)
         self.dino_img = ImageTk.PhotoImage(resized_img)
         self.root.dino_img = self.dino_img  # zapobiega GC
@@ -223,6 +225,8 @@ class DinoGame:
         """Wyjście z gry"""
         self.final_score = self.score
         self.root.destroy()
+        if self.on_close_callback:
+            self.on_close_callback()
 
 
 if __name__ == "__main__":

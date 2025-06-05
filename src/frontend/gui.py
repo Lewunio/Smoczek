@@ -69,6 +69,8 @@ def window(root, pet):
 
 
     def decay_stats():
+        if not canvas.winfo_exists():
+            return  # Canvas już nie istnieje – zakończ
         pet.update_stats()
         update_labels()
         root.after(3000, decay_stats)
@@ -347,5 +349,13 @@ def load_existing_game(root):
     except Exception as e:
         messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
 def game(root, pet):
-    DinoGame(root,pet)
-    window(root,pet)
+    root.withdraw()
+    game_window = tk.Toplevel(root)
+    game_window.title("DinoGame")
+
+    def back_to_main():
+        root.deiconify()
+        window(root, pet)
+
+    # Przekazanie callbacku do DinoGame
+    DinoGame(game_window, pet, on_close_callback=back_to_main)
