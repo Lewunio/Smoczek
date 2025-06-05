@@ -18,6 +18,14 @@ def window(root, pet):
     root.title("Zwierzak GUI")
     WIDTH, HEIGHT = 1400, 800
 
+
+    def save_on_close():
+        should_save = messagebox.askyesno("Zamknij grę", "Czy chcesz zapisać grę przed wyjściem?",parent=root)
+        if should_save:
+            save_game(pet)
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", save_on_close)
     # tło jaskini
 
     bg_path = "src/frontend/assets/backgrounds/cave.png"
@@ -45,7 +53,6 @@ def window(root, pet):
         anchor="s",
     )
 
-
     def change_pet_image(image_path, duration_ms=1000):
         new_img = Image.open(image_path).resize((400, 400))
         new_photo = ImageTk.PhotoImage(new_img)
@@ -66,6 +73,8 @@ def window(root, pet):
         canvas.itemconfig(canvas.exp_value_text, text=str(int(pet.exp)))
         canvas.itemconfig(canvas.hunger_value_text, text=f"{int(pet.hunger)} / {int(pet.hunger_level)}")
         canvas.itemconfig(canvas.tired_value_text, text=f"{int(pet.tired)} / 100")
+        canvas.itemconfig(canvas.happy_icon_text, text=f"{int(pet.happy)} / {int(pet.happy_level)}")
+
 
 
     def decay_stats():
