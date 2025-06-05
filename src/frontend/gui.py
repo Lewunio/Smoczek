@@ -51,13 +51,10 @@ def window(root, pet):
 
         canvas.after(duration_ms, revert_image)
 
-
-
-
     def update_labels():
         canvas.itemconfig(canvas.exp_value_text, text=str(int(pet.exp)))
         canvas.itemconfig(canvas.hunger_value_text, text=f"{int(pet.hunger)} / {int(pet.hunger_level)}")
-
+        canvas.itemconfig(canvas.tired_value_text, text=f"{int(pet.tired)} / 100")
 
 
     def decay_stats():
@@ -127,6 +124,20 @@ def window(root, pet):
     canvas.create_image(WIDTH - 180, 30, image=exp_icon, anchor="ne")
     canvas.exp_value_text = canvas.create_text(WIDTH - 100, 80, text=str(int(pet.exp)), fill="white",
                                                font=("Arial", 38, "bold"), anchor="ne")
+
+    # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
+    tired_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/grey_hungry_icon.png").resize((80, 80)))
+    canvas.tired_icon = tired_icon  # zapamiętaj referencję
+
+    canvas.create_image(30, 130, image=tired_icon, anchor="nw")  # niżej o 100px
+
+    canvas.tired_value_text = canvas.create_text(
+        130, 150,
+        text=f"{int(pet.tired)} / 100",
+        fill="white",
+        font=("Arial", 26, "bold"),
+        anchor="w"
+    )
 
     update_labels()
     decay_stats()
@@ -244,7 +255,7 @@ def choose_egg(root, start_game_callback):
                 chosen_species_package = species_packages[species_index]
                 required_food = int(food_str)
                 play_time_required = int(play_str)
-                pet = Pet(name, chosen_species_package, hunger_level=required_food)
+                pet = Pet(name=name, species=chosen_species_package, hunger_level=required_food)
                 start_game_callback(pet)
 
     canvas.bind("<Button-1>", on_click)
