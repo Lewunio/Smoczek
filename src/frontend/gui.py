@@ -30,10 +30,10 @@ def window(root, pet):
 
     # === ZWIERZAK ===
     pet_image_path = f"src/frontend/assets/{pet.species}/static_pet.png"
-    pet_img = Image.open(pet_image_path).resize((300, 300))  # rozmiar możesz zmienić
+    pet_img = Image.open(pet_image_path).resize((400, 400))  # rozmiar możesz zmienić
     pet_photo = ImageTk.PhotoImage(pet_img)
     canvas.pet_photo = pet_photo  # zapamiętaj referencję
-    canvas.create_image(WIDTH // 2, HEIGHT // 2, image=pet_photo)
+    canvas.create_image(720, 480, image=pet_photo)
 
     # === INFOKA ===
     info_frame = tk.Frame(root, bg="#ffffff")
@@ -65,12 +65,37 @@ def window(root, pet):
         root.after(3000, decay_stats)
 
     # === PRZYCISKI ===
-    button_frame = tk.Frame(root, pady=10, bg="#ffffff")
-    canvas.create_window(WIDTH // 2, HEIGHT - 100, anchor="center", window=button_frame)
+    # === PRZYCISKI-GRAFIKI ===
+    meat_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/meat_in_frame.png").resize((150, 150)))
+    game_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/game.png").resize((150, 150)))
+    sleep_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/sleep.png").resize((150, 150)))
 
-    tk.Button(button_frame, text="😴 Śpij", command=pet.sleep, width=10).grid(row=0, column=0, padx=5)
-    tk.Button(button_frame, text="🍗 Jedz", command=pet.eat, width=10).grid(row=0, column=1, padx=5)
-    tk.Button(button_frame, text="🎮 Baw się", command=pet.play, width=10).grid(row=0, column=2, padx=5)
+    canvas.meat_icon = meat_icon
+    canvas.game_icon = game_icon
+    canvas.sleep_icon = sleep_icon
+
+    button_y = HEIGHT - 100
+    button_spacing = 150
+    button_start_x = WIDTH // 2 - button_spacing
+
+    canvas.create_image(button_start_x, button_y, image=sleep_icon, anchor="center", tags="sleep")
+    canvas.create_image(WIDTH // 2, button_y, image=meat_icon, anchor="center", tags="eat")
+    canvas.create_image(WIDTH // 2 + button_spacing, button_y, image=game_icon, anchor="center", tags="play")
+
+    def on_icon_click(event):
+        item = canvas.find_closest(event.x, event.y)[0]
+        tags = canvas.gettags(item)
+        if "sleep" in tags:
+            pet.sleep()
+        elif "eat" in tags:
+            pet.eat()
+        elif "play" in tags:
+            pet.play()
+        update_labels()
+
+    canvas.tag_bind("sleep", "<Button-1>", on_icon_click)
+    canvas.tag_bind("eat", "<Button-1>", on_icon_click)
+    canvas.tag_bind("play", "<Button-1>", on_icon_click)
 
     update_labels()
     decay_stats()
@@ -148,7 +173,7 @@ def choose_egg(root, start_game_callback):
     start_x = 400
     gap = 200
 
-    species_packages = ["reddragon", "fenix", "gryf", "tiger"]
+    species_packages = ["reddragon", "tiger", "fenix", "gryf"]
 
     for i in range(4):
         path = f"src/frontend/assets/eggs/egg{i+1}.png"
