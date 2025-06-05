@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from .pet import Pet
 
 
-def save_game(pet: Pet, filename: str="save.json"):
+def save_game(pet: Pet, filename: str="src/backend/save.json"):
     """
         Zapisuje stan zwierzaka do pliku JSON.
         Przeksztalca dane zwierzaka na dict i zapisuje date.
@@ -18,21 +18,21 @@ def save_game(pet: Pet, filename: str="save.json"):
         data = {
             "name": pet.name,
             "species": pet.species,
-            "birth": pet.birth,
+            "birth": pet.birth.__str__(),
             "happy": pet.happy,
             "hunger": pet.hunger,
             "exp": pet.exp,
             "tired": pet.tired,
             "hunger_level": pet.hunger_level,
             "happy_level": pet.happy_level,
-            "save_date": datetime.today().isoformat()
+            "save_date": datetime.today().isoformat().__str__()
         }
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
     except Exception as e:
         print(f"Błąd zapisu: {e}")
 
-def load_game(filename: str="save.json") -> Pet:
+def load_game(filename: str="src/backend/save.json") -> Pet:
     """
         Wczytuje stan gry z pliku JSON.
 
@@ -57,8 +57,11 @@ def load_game(filename: str="save.json") -> Pet:
               happy_level=data["happy_level"])
     time = datetime.fromisoformat(data["save_date"])
     load_time = datetime.now()
-    while time <= load_time:
+    pet.hunger = data["hunger"]
+    pet.happy = data["happy"]
+    while time < load_time:
         pet.update_stats()
-        time = time + timedelta(days=1)
+        time = time + timedelta(minutes=1)
+
     return pet
     
