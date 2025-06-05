@@ -7,61 +7,63 @@ from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
 
 chosen_species_package = None
-# def window(pet):
-#
-#     root = tk.Tk()
-#     root.title("Zwierzak GUI")
-#
-#
-#     bg_path = os.path.join("src", "frontend", "assets", "backgrounds", "cave.png")
-#     bg_image = Image.open(bg_path)
-#     bg_photo = ImageTk.PhotoImage(bg_image)
-#
-#     canvas = tk.Canvas(root, width=bg_image.width, height=bg_image.height)
-#     canvas.pack()
-#     canvas.create_image(0,0,image=bg_photo, anchor="nw")
-#
-#
-#     name_label = tk.Label(root, text="", bg="#ffffff", font=("Arial",14))
-#     name_label_window = canvas.create_window(50,50, anchor="nw", window=name_label)
-#
-#     # Labels
-#     name_label = tk.Label(frame, text="")
-#     species_label = tk.Label(frame, text="")
-#     birth_label = tk.Label(frame, text="")
-#     happy_label = tk.Label(frame, text="")
-#     hunger_label = tk.Label(frame, text="")
-#     tired_label = tk.Label(frame, text="")
-#     exp_label = tk.Label(frame, text="")
-#
-#     def update_labels():
-#         name_label.config(text=f"Imię: {pet.name}")
-#         species_label.config(text=f"Gatunek: {pet.species}")
-#         birth_label.config(text=f"Urodzony: {pet.birth}")
-#         happy_label.config(text=f"❤️ Szczęście: {pet.happy}/100")
-#         hunger_label.config(text=f"🍗 Głód: {pet.hunger}/100")
-#         tired_label.config(text=f"😴 Zmęczenie: {pet.tired}/100")
-#         exp_label.config(text=f"⭐ Doświadczenie: {pet.exp}")
-#
-#     def decay_stats():
-#         pet.update_stats()
-#         update_labels()
-#         root.after(3000, decay_stats)
-#
-#     for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
-#         label.pack(anchor="w")
-#
-#     # Buttons
-#     button_frame = tk.Frame(root, pady=10)
-#     button_frame.pack()
-#
-#     tk.Button(button_frame, text="😴 Śpij", command=pet.sleep, width=10).grid(row=0, column=0, padx=5)
-#     tk.Button(button_frame, text="🍗 Jedz", command=pet.eat, width=10).grid(row=0, column=1, padx=5)
-#     tk.Button(button_frame, text="🎮 Baw się", command=pet.play, width=10).grid(row=0, column=2, padx=5)
-#
-#     update_labels()
-#     decay_stats()
-#     root.mainloop()
+required_food = None
+play_time_required = None
+def window(pet):
+
+    root = tk.Tk()
+    root.title("Zwierzak GUI")
+
+
+    bg_path = os.path.join("src", "frontend", "assets", "backgrounds", "cave.png")
+    bg_image = Image.open(bg_path)
+    bg_photo = ImageTk.PhotoImage(bg_image)
+
+    canvas = tk.Canvas(root, width=bg_image.width, height=bg_image.height)
+    canvas.pack()
+    canvas.create_image(0,0,image=bg_photo, anchor="nw")
+
+
+    name_label = tk.Label(root, text="", bg="#ffffff", font=("Arial",14))
+    name_label_window = canvas.create_window(50,50, anchor="nw", window=name_label)
+
+    # Labels
+    name_label = tk.Label(frame, text="")
+    species_label = tk.Label(frame, text="")
+    birth_label = tk.Label(frame, text="")
+    happy_label = tk.Label(frame, text="")
+    hunger_label = tk.Label(frame, text="")
+    tired_label = tk.Label(frame, text="")
+    exp_label = tk.Label(frame, text="")
+
+    def update_labels():
+        name_label.config(text=f"Imię: {pet.name}")
+        species_label.config(text=f"Gatunek: {pet.species}")
+        birth_label.config(text=f"Urodzony: {pet.birth}")
+        happy_label.config(text=f"❤️ Szczęście: {pet.happy}/100")
+        hunger_label.config(text=f"🍗 Głód: {pet.hunger}/100")
+        tired_label.config(text=f"😴 Zmęczenie: {pet.tired}/100")
+        exp_label.config(text=f"⭐ Doświadczenie: {pet.exp}")
+
+    def decay_stats():
+        pet.update_stats()
+        update_labels()
+        root.after(3000, decay_stats)
+
+    for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
+        label.pack(anchor="w")
+
+    # Buttons
+    button_frame = tk.Frame(root, pady=10)
+    button_frame.pack()
+
+    tk.Button(button_frame, text="😴 Śpij", command=pet.sleep, width=10).grid(row=0, column=0, padx=5)
+    tk.Button(button_frame, text="🍗 Jedz", command=pet.eat, width=10).grid(row=0, column=1, padx=5)
+    tk.Button(button_frame, text="🎮 Baw się", command=pet.play, width=10).grid(row=0, column=2, padx=5)
+
+    update_labels()
+    decay_stats()
+    root.mainloop()
 
 def choose_egg(root, start_game_callback):
     for widget in root.winfo_children():
@@ -83,39 +85,51 @@ def choose_egg(root, start_game_callback):
     entry_width = 30
 
     # Tworzymy ramkę do trzymania entry
-    entry_frame = tk.Frame(root, bg="black")
-    name_entry = tk.Entry(
-        entry_frame,
-        font=("Arial", 20, "italic"),
-        fg="gray",
-        bg="black",
-        insertbackground="white",
-        width=30,
-        bd=4,
-        relief="ridge",
-        justify="center"
-    )
-    name_entry.pack()
+    # === POLA TEKSTOWE ===
+    placeholder_texts = [
+        "Podaj imie zwierzaka",
+        "Ilość pożywienia do przeżycia",
+        "Czas zabawy (w sekundach)"
+    ]
+    entries = []
 
-    # Dodajemy placeholder
-    placeholder_text = "Podaj imie zwierzaka"
-    name_entry.insert(0, placeholder_text)
+    for i, placeholder in enumerate(placeholder_texts):
+        frame = tk.Frame(canvas, width=300, height=75, bg="black")
+        frame.pack_propagate(False)  # nie dopuszcza, żeby Frame zmniejszył się do rozmiaru Entry
 
-    def on_entry_focus_in(event):
-        if name_entry.get() == placeholder_text:
-            name_entry.delete(0, tk.END)
-            name_entry.config(font=("Arial", 20, "normal"), fg="white")
+        entry = tk.Entry(
+            frame,
+            font=("Arial", 20, "italic"),
+            fg="gray",
+            bg="black",
+            insertbackground="white",
+            bd=4,
+            relief="ridge",
+            justify="center"
+        )
+        entry.insert(0, placeholder)
+        entry.pack(fill="both", expand=True)
 
-    def on_entry_focus_out(event):
-        if name_entry.get().strip() == "":
-            name_entry.insert(0, placeholder_text)
-            name_entry.config(font=("Arial", 20, "italic"), fg="gray")
+        canvas.create_window(WIDTH // 2, 100 + i * 90, window=frame)
 
-    name_entry.bind("<FocusIn>", on_entry_focus_in)
-    name_entry.bind("<FocusOut>", on_entry_focus_out)
+        def make_focus_in(entry_ref=entry, ph=placeholder):
+            return lambda e: (
+                entry_ref.delete(0, tk.END),
+                entry_ref.config(font=("Arial", 20, "normal"), fg="white")
+            ) if entry_ref.get() == ph else None
 
-    # Umieszczamy całą ramkę na canvasie
-    canvas.create_window(WIDTH // 2, 100, window=entry_frame)
+        def make_focus_out(entry_ref=entry, ph=placeholder):
+            return lambda e: (
+                entry_ref.insert(0, ph),
+                entry_ref.config(font=("Arial", 20, "italic"), fg="gray")
+            ) if entry_ref.get().strip() == "" else None
+
+        entry.bind("<FocusIn>", make_focus_in())
+        entry.bind("<FocusOut>", make_focus_out())
+
+        entries.append(entry)
+
+    root.after(100, lambda: entries[0].focus_force())
 
     # === Jajka ===
     egg_images = []
@@ -145,15 +159,27 @@ def choose_egg(root, start_game_callback):
         clicked = canvas.find_closest(event.x, event.y)[0]
         for egg_id, species_index in egg_ids:
             if clicked == egg_id:
-                name = name_entry.get().strip()
-                if name == "" or name == placeholder_text:
-                    messagebox.showwarning("Błąd", "Podaj imię zwierzaka przed wyborem jajka!")
+                name = entries[0].get().strip()
+                food_str = entries[1].get().strip()
+                play_str = entries[2].get().strip()
+
+                if name == "" or name == placeholder_texts[0]:
+                    messagebox.showwarning("Błąd", "Podaj imię zwierzaka!")
                     return
+                if not food_str.isdigit():
+                    messagebox.showwarning("Błąd", "Podaj poprawną ilość pożywienia (liczba całkowita)!")
+                    return
+                if not play_str.isdigit():
+                    messagebox.showwarning("Błąd", "Podaj poprawny czas zabawy (liczba całkowita w sekundach)!")
+                    return
+
+                global chosen_species_package, required_food, play_time_required
                 chosen_species_package = species_packages[species_index]
+                required_food = int(food_str)
+                play_time_required = int(play_str)
                 pet = Pet(name, chosen_species_package)
                 root.destroy()
                 start_game_callback(pet)
-                break
 
     canvas.bind("<Button-1>", on_click)
 
@@ -179,7 +205,7 @@ def make_image_button(canvas, x, y, text, command, image):
         highlightthickness=0,
         command=command
     )
-    canvas.create_window(x,y,window=button)
+    return canvas.create_window(x,y,window=button)
 def menu():
     root = tk.Tk()
     root.title("Menu Główne")
