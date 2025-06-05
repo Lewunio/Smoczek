@@ -175,6 +175,19 @@ def window(root, pet):
         font=("Arial", 26, "bold"),
         anchor="w"
     )
+    # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
+    happy_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/zmeczenie.png").resize((80, 80)))
+    canvas.happy_icon = happy_icon  # zapamiętaj referencję
+
+    canvas.create_image(30, 130, image=happy_icon, anchor="nw")  # niżej o 100px
+
+    canvas.happy_icon_text = canvas.create_text(
+        110, 258,  # tutaj
+        text=f"{int(pet.happy)} / {int(pet.happy_level)})",
+        fill="white",
+        font=("Arial", 26, "bold"),
+        anchor="w"
+    )
 
     update_labels()
     decay_stats()
