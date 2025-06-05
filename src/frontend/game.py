@@ -1,40 +1,45 @@
 import tkinter as tk
 import random
-from PIL import Image, ImageTk
+from traceback import print_tb
 
+from PIL import Image, ImageTk
+from src.backend.pet import Pet
+
+WINDOW_WIDTH = 1400
+WINDOW_HEIGHT = 800
+GROUND_Y = 500
 OBSTACLE_INTERVAL = 2000  # ms
 INITIAL_SPEED = 10
 
 class DinoGame:
-    def __init__(self, root):
+    def __init__(self, root,pet:Pet):
+        self.pet = pet
         self.root = root
-        self.root.geometry("1400x800")
-        self.root.update()
-
-        self.window_width = self.root.winfo_width()
-        self.window_height = self.root.winfo_height()
-        self.ground_y = int(self.window_height * 0.3125)
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.root.resizable(False, False)
+        self.root.title("Dino Gra")
 
         # Tło
         self.bg_image_pil = Image.open("assets/backgrounds/cave.png")
-        self.bg_resized = self.bg_image_pil.resize((self.window_width, self.window_height))
+        self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.bg_photo = ImageTk.PhotoImage(self.bg_resized)
 
-        self.canvas = tk.Canvas(root, width=self.window_width, height=self.window_height)
-        self.canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(root, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
+        self.canvas.pack()
         self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw", tags="background")
         self.canvas.tag_lower("background")
         self.root.bg_photo = self.bg_photo
 
-        # Dinozaur
+        # Dinozaur – większy, przesunięty do środka
         original_img = Image.open("assets/reddragon/running_pet.png")
-        resized_img = original_img.resize((40, 40), Image.Resampling.LANCZOS)
+        resized_img = original_img.resize((80, 80), Image.Resampling.LANCZOS)
         self.dino_img = ImageTk.PhotoImage(resized_img)
-        self.root.dino_img = self.dino_img  # chroni przed garbage collection
-        self.dino = self.canvas.create_image(70, self.ground_y - 25, image=self.dino_img)
-        self.dino_y = self.ground_y
+        self.root.dino_img = self.dino_img
+        self.dino_x = 300
+        self.dino_y = GROUND_Y
+        self.dino = self.canvas.create_image(self.dino_x, self.dino_y - 40, image=self.dino_img)
 
-        # Ruch
+        # Skok
         self.is_jumping = False
         self.jump_velocity = 0
         self.root.bind("<space>", self.jump)
@@ -44,31 +49,30 @@ class DinoGame:
         self.game_running = True
         self.speed = INITIAL_SPEED
         self.score = 0
-        self.final_score = None
+        self.final_score = 0
+        self.game_over_text = None
 
-        self.score_text = self.canvas.create_text(10, 10, anchor="nw",
-                                                  text=f"Wynik: {self.score}", font=("Arial", 14), fill="black")
+        self.score_text = self.canvas.create_text(WINDOW_WIDTH // 2, 40, anchor="n",
+                                                  text=f"Wynik: {self.score}",
+                                                  font=("Arial", 24, "bold"), fill="white")
 
         self.spawn_obstacle()
         self.update_game()
         self.increase_speed()
 
-        self.root.bind("<Configure>", self.on_resize)
-        self.on_resize(tk.Event())  # wymuś ustawienie po starcie
-
     def jump(self, event=None):
         if not self.is_jumping and self.game_running:
             self.is_jumping = True
-            self.jump_velocity = -15
+            self.jump_velocity = -25  # wyższy skok
 
     def spawn_obstacle(self):
-        if not self.game_running or self.ground_y is None:
+        if not self.game_running:
             return
-        x = self.window_width
+        x = WINDOW_WIDTH
         height_units = random.randint(1, 3)
-        height = 20 * height_units
-        y = self.ground_y
-        obstacle = self.canvas.create_rectangle(x, y - height, x + 20, y, fill="brown")
+        height = 40 * height_units  # większe przeszkody
+        y = GROUND_Y
+        obstacle = self.canvas.create_rectangle(x, y - height, x + 40, y, fill="brown")
         self.obstacles.append(obstacle)
         self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
 
@@ -76,15 +80,16 @@ class DinoGame:
         if not self.game_running:
             return
 
+        # Grawitacja i skok
         if self.is_jumping:
-            self.canvas.move(self.dino, 0, self.jump_velocity)
+            self.jump_velocity += 1.5  # szybciej opada
             self.dino_y += self.jump_velocity
-            self.jump_velocity += 1
-            if self.dino_y >= self.ground_y:
-                self.dino_y = self.ground_y
-                self.canvas.coords(self.dino, 70, self.ground_y - 25)
+            if self.dino_y >= GROUND_Y:
+                self.dino_y = GROUND_Y
                 self.is_jumping = False
+            self.canvas.coords(self.dino, self.dino_x, self.dino_y - 40)
 
+        # Ruch przeszkód
         for obstacle in list(self.obstacles):
             self.canvas.move(obstacle, -self.speed, 0)
             coords = self.canvas.coords(obstacle)
@@ -94,12 +99,13 @@ class DinoGame:
                 self.score += 1
                 self.canvas.itemconfig(self.score_text, text=f"Wynik: {self.score}")
 
+        # Kolizje
         for obstacle in self.obstacles:
             if self.check_collision(self.dino, obstacle):
                 self.game_over()
                 return
 
-        self.root.after(30, self.update_game)
+        self.root.after(10, self.update_game)  # ultra płynność
 
     def check_collision(self, dino, obstacle):
         dino_coords = self.canvas.bbox(dino)
@@ -111,8 +117,11 @@ class DinoGame:
 
     def game_over(self):
         self.game_running = False
-        self.canvas.create_text(self.window_width // 2, self.window_height // 2 - 30,
-                                text="GAME OVER", font=("Arial", 24), fill="red")
+        self.game_over_text = self.canvas.create_text(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 30,
+                                                      text="GAME OVER", font=("Arial", 36, "bold"), fill="red")
+
+        for _ in range(int(self.final_score/10+1)):
+            self.pet.play()
         self.show_game_over_options()
 
     def show_game_over_options(self):
@@ -134,17 +143,21 @@ class DinoGame:
 
         self.canvas.delete(self.dino)
         self.canvas.delete(self.score_text)
+        if self.game_over_text:
+            self.canvas.delete(self.game_over_text)
 
-        self.dino = self.canvas.create_image(70, self.ground_y - 25, image=self.dino_img)
-        self.dino_y = self.ground_y
+        self.dino_y = GROUND_Y
+        self.dino = self.canvas.create_image(self.dino_x, self.dino_y - 40, image=self.dino_img)
         self.is_jumping = False
         self.jump_velocity = 0
         self.speed = INITIAL_SPEED
         self.score = 0
         self.game_running = True
+        self.game_over_text = None
 
-        self.score_text = self.canvas.create_text(10, 10, anchor="nw",
-                                                  text=f"Wynik: {self.score}", font=("Arial", 14), fill="black")
+        self.score_text = self.canvas.create_text(WINDOW_WIDTH // 2, 40, anchor="n",
+                                                  text=f"Wynik: {self.score}",
+                                                  font=("Arial", 24, "bold"), fill="white")
 
         self.spawn_obstacle()
         self.update_game()
@@ -152,35 +165,18 @@ class DinoGame:
 
     def increase_speed(self):
         if self.game_running:
-            self.speed += 0.5
-            self.root.after(5000, self.increase_speed)
+            self.speed += 1.5  # szybciej rośnie prędkość
+            self.root.after(3000, self.increase_speed)  # częstsze przyspieszanie
 
     def quit_game(self):
         self.final_score = self.score
-        print(f"Wynik końcowy: {self.final_score}")
         self.root.destroy()
-
-    def on_resize(self, event):
-        self.window_width = self.root.winfo_width()
-        self.window_height = self.root.winfo_height()
-        self.ground_y = int(self.window_height * 0.3125)
-
-        self.canvas.config(width=self.window_width, height=self.window_height)
-        self.canvas.delete("background")
-
-        self.bg_resized = self.bg_image_pil.resize((self.window_width, self.window_height))
-        self.bg_photo = ImageTk.PhotoImage(self.bg_resized)
-        self.root.bg_photo = self.bg_photo
-
-        self.canvas.create_image(0, 0, image=self.bg_photo, anchor="nw", tags="background")
-        self.canvas.tag_lower("background")
-
-        self.canvas.coords(self.dino, 70, self.dino_y - 25)
 
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Dino Gra")
-    game = DinoGame(root)
+    pet = Pet(name="sss",species="ss",happy=20)
+    game = DinoGame(root,pet)
     root.mainloop()
     print("Z gry uzyskano wynik:", game.final_score)
+    print(pet.__str__())
