@@ -2,11 +2,11 @@
     "name": "s",
     "species": "reddragon",
     "birth": "2025-06-05 22:26:42.273273",
-    "happy": 31.5,
-    "hunger": 51.5,
+    "happy": 29.5,
+    "hunger": 49.5,
     "exp": 20,
-    "tired": 31.5,
+    "tired": 29.5,
     "hunger_level": 100,
     "happy_level": 100,
-    "save_date": "2025-06-06T00:31:51.974340"
+    "save_date": "2025-06-06T00:33:39.733613"
 }
