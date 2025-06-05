@@ -1,7 +1,7 @@
 import os.path
 from PIL import Image, ImageTk
 import tkinter as tk
-from tkinter import simpledialog, messagebox
+from tkinter import messagebox
 from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
 from .tools import make_image_button
