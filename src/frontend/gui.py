@@ -325,6 +325,7 @@ def choose_egg(root, start_game_callback):
 def menu():
     root = tk.Tk()
     root.title("Menu Główne")
+    root.resizable(False, False)
     root.attributes("-topmost", True)
     WIDTH, HEIGHT = 1400, 800
     root.geometry(f"{WIDTH}x{HEIGHT}")
