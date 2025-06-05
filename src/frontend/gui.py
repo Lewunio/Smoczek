@@ -9,32 +9,46 @@ from src.backend.save import save_game, load_game
 chosen_species_package = None
 required_food = None
 play_time_required = None
-def window(pet):
 
-    root = tk.Tk()
+def window(root, pet):
+    for widget in root.winfo_children():
+        widget.destroy()
+
     root.title("Zwierzak GUI")
+    WIDTH, HEIGHT = 1400, 800
 
+    # tło jaskini
 
-    bg_path = os.path.join("src", "frontend", "assets", "backgrounds", "cave.png")
-    bg_image = Image.open(bg_path)
+    bg_path = "src/frontend/assets/backgrounds/cave.png"
+    bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
     bg_photo = ImageTk.PhotoImage(bg_image)
 
-    canvas = tk.Canvas(root, width=bg_image.width, height=bg_image.height)
+    canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack()
-    canvas.create_image(0,0,image=bg_photo, anchor="nw")
+    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+    root.bg_photo = bg_photo  # referencja, żeby nie usunęło z pamięci
 
+    # === ZWIERZAK ===
+    pet_image_path = f"src/frontend/assets/{pet.species}/static_pet.png"
+    pet_img = Image.open(pet_image_path).resize((300, 300))  # rozmiar możesz zmienić
+    pet_photo = ImageTk.PhotoImage(pet_img)
+    canvas.pet_photo = pet_photo  # zapamiętaj referencję
+    canvas.create_image(WIDTH // 2, HEIGHT // 2, image=pet_photo)
 
-    name_label = tk.Label(root, text="", bg="#ffffff", font=("Arial",14))
-    name_label_window = canvas.create_window(50,50, anchor="nw", window=name_label)
+    # === INFOKA ===
+    info_frame = tk.Frame(root, bg="#ffffff")
+    canvas.create_window(50, 50, anchor="nw", window=info_frame)
 
-    # Labels
-    name_label = tk.Label(frame, text="")
-    species_label = tk.Label(frame, text="")
-    birth_label = tk.Label(frame, text="")
-    happy_label = tk.Label(frame, text="")
-    hunger_label = tk.Label(frame, text="")
-    tired_label = tk.Label(frame, text="")
-    exp_label = tk.Label(frame, text="")
+    name_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    species_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    birth_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    happy_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    hunger_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    tired_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+    exp_label = tk.Label(info_frame, text="", bg="#ffffff", font=("Arial", 14))
+
+    for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
+        label.pack(anchor="w")
 
     def update_labels():
         name_label.config(text=f"Imię: {pet.name}")
@@ -50,12 +64,9 @@ def window(pet):
         update_labels()
         root.after(3000, decay_stats)
 
-    for label in [name_label, species_label, birth_label, happy_label, hunger_label, tired_label, exp_label]:
-        label.pack(anchor="w")
-
-    # Buttons
-    button_frame = tk.Frame(root, pady=10)
-    button_frame.pack()
+    # === PRZYCISKI ===
+    button_frame = tk.Frame(root, pady=10, bg="#ffffff")
+    canvas.create_window(WIDTH // 2, HEIGHT - 100, anchor="center", window=button_frame)
 
     tk.Button(button_frame, text="😴 Śpij", command=pet.sleep, width=10).grid(row=0, column=0, padx=5)
     tk.Button(button_frame, text="🍗 Jedz", command=pet.eat, width=10).grid(row=0, column=1, padx=5)
@@ -63,7 +74,6 @@ def window(pet):
 
     update_labels()
     decay_stats()
-    root.mainloop()
 
 def choose_egg(root, start_game_callback):
     for widget in root.winfo_children():
@@ -138,7 +148,7 @@ def choose_egg(root, start_game_callback):
     start_x = 400
     gap = 200
 
-    species_packages = ["dragon", "phoenix", "griffin", "unicorn"]
+    species_packages = ["reddragon", "fenix", "gryf", "tiger"]
 
     for i in range(4):
         path = f"src/frontend/assets/eggs/egg{i+1}.png"
@@ -178,8 +188,7 @@ def choose_egg(root, start_game_callback):
                 required_food = int(food_str)
                 play_time_required = int(play_str)
                 pet = Pet(name, chosen_species_package)
-                root.destroy()
-                start_game_callback(pet)
+                window(root, pet)
 
     canvas.bind("<Button-1>", on_click)
 
@@ -187,7 +196,7 @@ def choose_egg(root, start_game_callback):
 def make_image_button(canvas, x, y, text, command, image):
     width = 400
     height = 75
-    canvas.create_rectangle(
+    ramka = canvas.create_rectangle(
         x - width // 2 - 4, y - height // 2 - 4,
         x + width // 2 + 4, y + height // 2 + 4,
         outline="#4c2306", width=6  # kolor i grubość obramowania
@@ -205,7 +214,7 @@ def make_image_button(canvas, x, y, text, command, image):
         highlightthickness=0,
         command=command
     )
-    return canvas.create_window(x,y,window=button)
+    return [canvas.create_window(x,y,window=button), ramka]
 def menu():
     root = tk.Tk()
     root.title("Menu Główne")
@@ -268,7 +277,7 @@ def menu():
     btn_photo = ImageTk.PhotoImage(btn_img)
     canvas.btn_photo = btn_photo  # zapamiętaj referencję!
 
-    make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", lambda: choose_egg(root, start_game_callback=start_new_game), btn_photo)
+    make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", lambda: choose_egg(root, start_game_callback=lambda pet: window(root, pet)), btn_photo)
     make_image_button(canvas, WIDTH // 2, 525, "Wczytaj grę", load_existing_game, btn_photo)
     make_image_button(canvas, WIDTH // 2, 650, "Wyjście", root.destroy, btn_photo)
 
