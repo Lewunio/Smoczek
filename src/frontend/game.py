@@ -60,7 +60,7 @@ class DinoGame:
         self.obstacle_imgs = [self.big_spike_img, self.mid_spike_img, self.rock_img]
 
         # Wczytanie grafiki dinozaura
-        original_img = Image.open("src/frontend/assets/reddragon/running_pet.png")
+        original_img = Image.open(f"src/frontend/assets/{self.pet.species}/running_pet.png")
         resized_img = original_img.resize((P_SIZE, P_SIZE), Image.Resampling.LANCZOS)
         self.dino_img = ImageTk.PhotoImage(resized_img)
         self.root.dino_img = self.dino_img  # zapobiega GC
