@@ -39,9 +39,12 @@ class Pet:
 
     def eat(self):
         """Karmienie zwierzaka"""
-        if self.hunger < self.hunger_level*0.95 and not self.sleeping:
+        if self.can_eat:
             self.hunger = min(self.hunger_level, self.hunger + 20)
             self.exp += 5
+    @property
+    def can_eat(self):
+        return self.hunger < self.hunger_level*0.95 and not self.sleeping
 
     def play(self):
         """
