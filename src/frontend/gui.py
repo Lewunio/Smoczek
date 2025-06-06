@@ -6,14 +6,21 @@ from src.backend.save import save_game, load_game
 from .tools import make_image_button, load_photo
 from .game import DinoGame
 
+WIDTH, HEIGHT = 1400, 800
 
+def window(root:tk.Tk, pet:Pet):
+    """
+    Główne okno gry
 
-def window(root, pet):
+    Args:
+        root (tk.Tk): Okno gry
+        pet (Pet): Postać gry
+    """
     for widget in root.winfo_children():
         widget.destroy()
 
     root.title("Zwierzak GUI")
-    WIDTH, HEIGHT = 1400, 800
+
 
 
     def save_on_close():
@@ -213,7 +220,7 @@ def choose_egg(root, start_game_callback):
         widget.destroy()
 
     root.title("Wybierz swojego podopiecznego")
-    WIDTH, HEIGHT = 1400, 800
+
 
     bg_photo = load_photo("src/frontend/assets/backgrounds/cave.png", WIDTH, HEIGHT)
 
@@ -297,8 +304,8 @@ def choose_egg(root, start_game_callback):
         Wczutje dane z okienek
         """
         clicked = canvas.find_closest(event.x, event.y)[0]
-        for egg_id, species_index in egg_ids:
-            if clicked == egg_id:
+        for id_egg, species_index in egg_ids:
+            if clicked == id_egg:
                 name = entries[0].get().strip()
                 food_str = entries[1].get().strip()
                 play_str = entries[2].get().strip()
@@ -330,7 +337,7 @@ def menu():
     root.title("Menu Główne")
     root.resizable(False, False)
     root.attributes("-topmost", True)
-    WIDTH, HEIGHT = 1400, 800
+
     root.geometry(f"{WIDTH}x{HEIGHT}")
 
     # srodek ekraniu
