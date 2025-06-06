@@ -1,8 +1,7 @@
 import tkinter as tk
 import random
-from PIL import Image, ImageTk
 from src.backend.pet import Pet
-from .tools import make_image_button
+from .tools import make_image_button, load_photo
 
 # Stałe konfiguracyjne gry
 WINDOW_WIDTH = 1400
@@ -17,13 +16,14 @@ DOWN_SPEED = 3
 TOLERANCE = 40  # tolerancja kolizji
 
 class DinoGame:
-    def __init__(self, root_given, pet_given: Pet,on_close_callback=None):
+    def __init__(self, root_given:tk.Toplevel, pet_given:Pet,on_close_callback=None):
         """
         Inicjalizacja podstawowych zmiennych i ustawień okna gry
+        Ładowanie zdjęć
 
         Args:
-            root_given: root do okna
-            pet_given: Postac gry
+            root_given(tk.Toplevel): Okno gry
+            pet_given(Pet): Postać gry
             on_close_callback: callback function
         """
         self.on_close_callback = on_close_callback
@@ -36,9 +36,7 @@ class DinoGame:
         self.root.protocol("WM_DELETE_WINDOW", self.disable_close)
 
         # Ustawienie tła
-        self.bg_image_pil = Image.open("src/frontend/assets/backgrounds/game_cave.png")
-        self.bg_resized = self.bg_image_pil.resize((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.bg_photo = ImageTk.PhotoImage(self.bg_resized)
+        self.bg_photo = load_photo("src/frontend/assets/backgrounds/game_cave.png",WINDOW_WIDTH, WINDOW_HEIGHT)
 
         self.canvas = tk.Canvas(root_given, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
         self.canvas.pack()
@@ -47,22 +45,19 @@ class DinoGame:
         self.root.bg_photo = self.bg_photo
 
         # Game over - ikonka
-        game_over_img = Image.open("src/frontend/assets/items/gameover.png").resize((300,300))
-        self.game_over_img = ImageTk.PhotoImage(game_over_img)
+        self.game_over_img = load_photo("src/frontend/assets/items/gameover.png",300,300)
         # Przyciski – tło
-        button_bg = Image.open("src/frontend/assets/backgrounds/button_background.png").resize((400, 75))
-        self.button_image = ImageTk.PhotoImage(button_bg)
+        self.button_image = load_photo("src/frontend/assets/backgrounds/button_background.png", 400, 75)
 
         # Wczytanie grafik przeszkód
-        self.big_spike_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/big_spike.png").resize((O_SIZE * 2, O_SIZE * 3)))
-        self.mid_spike_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/mid_spike.png").resize((O_SIZE * 2, O_SIZE * 2)))
-        self.rock_img = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/rock.png").resize((O_SIZE, O_SIZE)))
+        self.big_spike_img = load_photo("src/frontend/assets/items/big_spike.png",O_SIZE * 2, O_SIZE * 3)
+        self.mid_spike_img = load_photo("src/frontend/assets/items/mid_spike.png",O_SIZE * 2, O_SIZE * 2)
+        self.rock_img = load_photo("src/frontend/assets/items/rock.png",O_SIZE, O_SIZE)
         self.obstacle_imgs = [self.big_spike_img, self.mid_spike_img, self.rock_img]
 
         # Wczytanie grafiki dinozaura
-        original_img = Image.open(f"src/frontend/assets/{self.pet.species}/running_pet.png")
-        resized_img = original_img.resize((P_SIZE, P_SIZE), Image.Resampling.LANCZOS)
-        self.dino_img = ImageTk.PhotoImage(resized_img)
+
+        self.dino_img = load_photo(f"src/frontend/assets/{self.pet.species}/running_pet.png", P_SIZE, P_SIZE)
         self.root.dino_img = self.dino_img  # zapobiega GC
         self.dino_x = 300
         self.dino_y = GROUND_Y
@@ -75,6 +70,7 @@ class DinoGame:
 
         # Inicjalizacja stanu gry
         self.obstacles = []
+        self.obstacle_after_id = None
         self.game_running = True
         self.speed = INITIAL_SPEED
         self.score = 0
@@ -91,8 +87,10 @@ class DinoGame:
         self.increase_speed()
 
     def disable_close(self):
-        """Zablokowanie zamykania okna (przycisk X)"""
-        pass
+        """Zmiana funkcji wychodzenia(przycisk X)"""
+        self.root.destroy()
+        if self.on_close_callback:
+            self.on_close_callback()
 
     def jump(self, event=None):
         """Obsługa skoku po naciśnięciu spacji"""
@@ -109,7 +107,7 @@ class DinoGame:
         rand = random.randint(0, 2)
         obstacle = self.canvas.create_image(x, y + 70, image=self.obstacle_imgs[rand], anchor="sw")
         self.obstacles.append(obstacle)
-        self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
+        self.obstacle_after_id = self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
 
     def update_game(self):
         """Główna pętla aktualizacji gry (grawitacja, kolizje, przeszkody)"""
@@ -147,7 +145,13 @@ class DinoGame:
 
 
     def check_collision(self, dino, obstacle):
-        """Detekcja kolizji z tolerancją"""
+        """
+        Detekcja kolizji z tolerancją
+
+        Args:
+            dino: Postać
+            obstacle: Przeszkoda
+        """
         dino_coords = self.canvas.bbox(dino)
         obs_coords = self.canvas.bbox(obstacle)
         tolerance = TOLERANCE
@@ -166,7 +170,7 @@ class DinoGame:
                                                        image=self.game_over_img, anchor="center")
 
         # Zwiększenie radości smoka
-        for _ in range(self.score // 5 + 1):
+        for _ in range(self.score // 3 + 1):
             self.pet.play()
 
         self.show_game_over_options()
@@ -213,6 +217,9 @@ class DinoGame:
         self.score_text = self.canvas.create_text(WINDOW_WIDTH // 2, 40, anchor="n",
                                                   text=f"Wynik: {self.score}",
                                                   font=("Arial", 24, "bold"), fill="white")
+        if self.obstacle_after_id:
+            self.root.after_cancel(self.obstacle_after_id)
+            self.obstacle_after_id = None
 
         self.spawn_obstacle()
         self.update_game()
@@ -232,10 +239,10 @@ class DinoGame:
             self.on_close_callback()
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    pet = Pet(name="sss", species="ss", happy=20)
-    game = DinoGame(root, pet)
-    root.mainloop()
-    print("Z gry uzyskano wynik:", game.final_score)
-    print(pet.__str__())
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     pet = Pet(name="sss", species="ss", happy=20)
+#     game = DinoGame(root, pet)
+#     root.mainloop()
+#     print("Z gry uzyskano wynik:", game.final_score)
+#     print(pet.__str__())

@@ -41,4 +41,4 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pillow", specifier = ">=11.2.1" }]
+requires-dist = [{ name = "pillow" }]
