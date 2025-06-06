@@ -1,10 +1,9 @@
 import os.path
-from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import messagebox
 from src.backend.pet import Pet
 from src.backend.save import save_game, load_game
-from .tools import make_image_button
+from .tools import make_image_button, load_photo
 from .game import DinoGame
 
 
@@ -18,6 +17,9 @@ def window(root, pet):
 
 
     def save_on_close():
+        """
+        Zapisywanie przy zamykaniu
+        """
         should_save = messagebox.askyesno("Zamknij grę", "Czy chcesz zapisać grę przed wyjściem?",parent=root)
         if should_save:
             save_game(pet)
@@ -26,10 +28,7 @@ def window(root, pet):
     root.protocol("WM_DELETE_WINDOW", save_on_close)
     # tło jaskini
 
-    bg_path = "src/frontend/assets/backgrounds/cave.png"
-    bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
-    bg_photo = ImageTk.PhotoImage(bg_image)
-
+    bg_photo = load_photo("src/frontend/assets/backgrounds/cave.png", WIDTH, HEIGHT)
     canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack()
     canvas.is_sleeping = False
@@ -37,9 +36,7 @@ def window(root, pet):
     root.bg_photo = bg_photo  # referencja, żeby nie usunęło z pamięci
 
     # === ZWIERZAK ===
-    pet_image_path = f"src/frontend/assets/{pet.species}/static_pet.png"
-    pet_img = Image.open(pet_image_path).resize((400, 400))  # rozmiar możesz zmienić
-    pet_photo = ImageTk.PhotoImage(pet_img)
+    pet_photo = load_photo(f"src/frontend/assets/{pet.species}/static_pet.png", 400, 400)
     canvas.pet_photo = pet_photo  # zapamiętaj referencję
     canvas.pet_image_id = canvas.create_image(WIDTH//2, 480, image=pet_photo)
     #=== IMIE ===
@@ -52,22 +49,23 @@ def window(root, pet):
     )
 
     def change_pet_image(image_path, duration_ms=1000):
-        new_img = Image.open(image_path).resize((400, 400))
-        new_photo = ImageTk.PhotoImage(new_img)
+        """Zmiana zdjęcia czasowo"""
+        new_photo = load_photo(image_path, 400, 400)
         canvas.pet_photo = new_photo
         canvas.itemconfig(canvas.pet_image_id, image=new_photo)
 
-        # Po upływie czasu wróć do podstawowego obrazka
         def revert_image():
-            static_path = f"src/frontend/assets/{pet.species}/static_pet.png"
-            static_img = Image.open(static_path).resize((400, 400))
-            static_photo = ImageTk.PhotoImage(static_img)
+            """Po upływie czasu wróć do podstawowego obrazka"""
+            static_photo = load_photo(f"src/frontend/assets/{pet.species}/static_pet.png", 400, 400)
             canvas.pet_photo = static_photo
             canvas.itemconfig(canvas.pet_image_id, image=static_photo)
 
         canvas.after(duration_ms, revert_image)
 
     def update_labels():
+        """
+        Funkcja aktualizująca dane w GUI
+        """
         canvas.itemconfig(canvas.exp_value_text, text=str(int(pet.exp)))
         canvas.itemconfig(canvas.hunger_value_text, text=f"{int(pet.hunger)} / {int(pet.hunger_level)}")
         canvas.itemconfig(canvas.tired_value_text, text=f"{int(pet.tired)} / 100")
@@ -76,6 +74,9 @@ def window(root, pet):
 
 
     def decay_stats():
+        """
+        Obniżanie statów zwierzaka
+        """
         if not canvas.winfo_exists():
             return  # Canvas już nie istnieje – zakończ
         pet.update_stats()
@@ -85,9 +86,10 @@ def window(root, pet):
 
     # === PRZYCISKI ===
     # === PRZYCISKI-GRAFIKI ===
-    meat_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/meat_in_frame.png").resize((150, 150)))
-    game_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/game.png").resize((150, 150)))
-    sleep_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/items/sleep.png").resize((150, 150)))
+
+    meat_icon = load_photo("src/frontend/assets/items/meat_in_frame.png",150, 150)
+    game_icon = load_photo("src/frontend/assets/items/game.png", 150, 150)
+    sleep_icon = load_photo("src/frontend/assets/items/sleep.png", 150, 150)
 
     canvas.meat_icon = meat_icon
     canvas.game_icon = game_icon
@@ -102,6 +104,7 @@ def window(root, pet):
     canvas.create_image(WIDTH // 2 + button_spacing, button_y, image=game_icon, anchor="center", tags="play")
 
     def on_icon_click(event):
+        """Zachowanie po kliknięciu ikony"""
         item = canvas.find_closest(event.x, event.y)[0]
         tags = canvas.gettags(item)
         if "sleep" in tags:
@@ -113,8 +116,7 @@ def window(root, pet):
                 if canvas.is_sleeping
                 else "src/frontend/assets/backgrounds/cave.png"
             )
-            new_bg = Image.open(new_bg_path).resize((WIDTH, HEIGHT))
-            new_bg_photo = ImageTk.PhotoImage(new_bg)
+            new_bg_photo = load_photo(new_bg_path, WIDTH, HEIGHT)
             canvas.bg_photo = new_bg_photo
             canvas.itemconfig(canvas.bg_id, image=new_bg_photo)
             new_pet_image_path = (
@@ -122,10 +124,9 @@ def window(root, pet):
                 if canvas.is_sleeping
                 else f"src/frontend/assets/{pet.species}/static_pet.png"
             )
-            pet_img = Image.open(new_pet_image_path).resize((400, 400))
-            pet_photo = ImageTk.PhotoImage(pet_img)
-            canvas.pet_photo = pet_photo
-            canvas.itemconfig(canvas.pet_image_id, image=pet_photo)
+            pet_photo2 = load_photo(new_pet_image_path, 400, 400)
+            canvas.pet_photo = pet_photo2
+            canvas.itemconfig(canvas.pet_image_id, image=pet_photo2)
 
 
         elif "eat" in tags:
@@ -144,11 +145,11 @@ def window(root, pet):
     canvas.tag_bind("play", "<Button-1>", on_icon_click)
 
 
-    exp_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/exp.png").resize((120, 120)))
+    exp_icon = load_photo("src/frontend/assets/icons/exp.png", 120, 120)
     canvas.exp_icon = exp_icon  # referencja żeby nie znikło
 
     # === HUNGER (GŁÓD) W LEWYM GÓRNYM ROGU ===
-    hunger_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/hungry_icon.png").resize((80, 80)))
+    hunger_icon = load_photo("src/frontend/assets/icons/hungry_icon.png",80,80)
     canvas.hunger_icon = hunger_icon  # zapamiętaj referencję
 
     # Dodaj ikonkę głodu
@@ -170,7 +171,7 @@ def window(root, pet):
                                                font=("Arial", 38, "bold"), anchor="ne")
 
     # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
-    tired_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/zmeczenie.png").resize((80, 80)))
+    tired_icon = load_photo("src/frontend/assets/icons/zmeczenie.png", 80, 80)
     canvas.tired_icon = tired_icon  # zapamiętaj referencję
 
     canvas.create_image(30, 130, image=tired_icon, anchor="nw")  # niżej o 100px
@@ -182,8 +183,8 @@ def window(root, pet):
         font=("Papyrus", 46, "bold"),
         anchor="w"
     )
-    # === TIRED (ZMĘCZENIE) PONIŻEJ GŁODU ===
-    happy_icon = ImageTk.PhotoImage(Image.open("src/frontend/assets/icons/happy.png").resize((80, 80)))
+    # === HAPPY (SZCZESCIE) PONIZEJ ZMECZENIA ===
+    happy_icon = load_photo("src/frontend/assets/icons/happy.png", 80, 80)
     canvas.happy_icon = happy_icon  # zapamiętaj referencję
 
     canvas.create_image(30, 216, image=happy_icon, anchor="nw")  # niżej o 100px
@@ -200,28 +201,27 @@ def window(root, pet):
     decay_stats()
 
 
-
 def choose_egg(root, start_game_callback):
-    chosen_species_package = None
-    required_food = None
-    play_time_required = None
+    """
+    Tworzenie zwierzaka
+
+    Args:
+        root (tkinter.Tk): Okno gry
+        start_game_callback: wywołanie głównej gry
+    """
     for widget in root.winfo_children():
         widget.destroy()
 
     root.title("Wybierz swojego podopiecznego")
     WIDTH, HEIGHT = 1400, 800
 
-    bg_path = "src/frontend/assets/backgrounds/cave.png"
-    bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
-    bg_photo = ImageTk.PhotoImage(bg_image)
+    bg_photo = load_photo("src/frontend/assets/backgrounds/cave.png", WIDTH, HEIGHT)
 
     canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack()
     canvas.create_image(0, 0, image=bg_photo, anchor="nw")
     root.bg_photo = bg_photo  # żeby nie wyczyściło obrazka z pamięci
 
-    placeholder_text = "Podaj imie zwierzaka"
-    entry_width = 30
 
     # Tworzymy ramkę do trzymania entry
     # === POLA TEKSTOWE ===
@@ -280,9 +280,7 @@ def choose_egg(root, start_game_callback):
     species_packages = ["reddragon", "tiger", "fenix", "gryf"]
 
     for i in range(4):
-        path = f"src/frontend/assets/eggs/egg{i+1}.png"
-        img = Image.open(path).resize((200, 200))
-        photo = ImageTk.PhotoImage(img)
+        photo = load_photo(f"src/frontend/assets/eggs/egg{i+1}.png", 200, 200)
         egg_images.append(photo)
 
         x = start_x + i * gap
@@ -294,7 +292,10 @@ def choose_egg(root, start_game_callback):
     canvas.egg_images = egg_images
 
     def on_click(event):
-        global chosen_species_package
+        """
+        Jak gra ma się zachować po kliknięciu jajka
+        Wczutje dane z okienek
+        """
         clicked = canvas.find_closest(event.x, event.y)[0]
         for egg_id, species_index in egg_ids:
             if clicked == egg_id:
@@ -312,10 +313,7 @@ def choose_egg(root, start_game_callback):
                     messagebox.showwarning("Błąd", "Podaj poprawny czas zabawy (liczba całkowita w sekundach)!")
                     return
 
-                chosen_species_package = species_packages[species_index]
-                required_food = int(food_str)
-                happy_level = int(play_str)
-                pet = Pet(name=name, species=chosen_species_package, hunger_level=required_food, happy_level=happy_level)
+                pet = Pet(name=name, species=species_packages[species_index], hunger_level=int(food_str), happy_level=int(play_str))
                 start_game_callback(pet)
 
     canvas.bind("<Button-1>", on_click)
@@ -323,6 +321,11 @@ def choose_egg(root, start_game_callback):
 
 
 def menu():
+    """
+    Tworzenie okna gry i uruchamianie menu
+    Gracz może wybrać co chce zrobić
+    Ustawia przyciski i ładuje grafiki menu
+    """
     root = tk.Tk()
     root.title("Menu Główne")
     root.resizable(False, False)
@@ -338,9 +341,8 @@ def menu():
     y = (screen_height // 2) - (HEIGHT // 2)
     root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
 
-    bg_path = "src/frontend/assets/backgrounds/menu.png"
-    bg_image = Image.open(bg_path).resize((WIDTH, HEIGHT))
-    bg_photo = ImageTk.PhotoImage(bg_image)
+    #tło menu
+    bg_photo = load_photo("src/frontend/assets/backgrounds/menu.png", WIDTH, HEIGHT)
 
     canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT)
     canvas.pack(fill="both", expand=True)
@@ -348,17 +350,12 @@ def menu():
     canvas.bg_photo = bg_photo
 
     #logo
-    logo_path = "src/frontend/assets/icons/logo.png"
-    logo_img = Image.open(logo_path).resize((500,400))
-    logo_photo = ImageTk.PhotoImage(logo_img)
+    logo_photo = load_photo("src/frontend/assets/icons/logo.png", 500, 400)
     canvas.logo_photo = logo_photo
     canvas.create_image(WIDTH//2,200,image=logo_photo, anchor="center")
 
-
-
-    btn_path = "src/frontend/assets/backgrounds/button_background.png"
-    btn_img = Image.open(btn_path).resize((400, 75))
-    btn_photo = ImageTk.PhotoImage(btn_img)
+    #przyciski
+    btn_photo = load_photo("src/frontend/assets/backgrounds/button_background.png", 400, 75)
     canvas.btn_photo = btn_photo  # zapamiętaj referencję!
 
     make_image_button(canvas, WIDTH // 2, 400, "Nowa gra", lambda: choose_egg(root, start_game_callback=lambda pet: window(root, pet)), btn_photo)
@@ -366,13 +363,29 @@ def menu():
     make_image_button(canvas, WIDTH // 2, 650, "Wyjście", root.destroy, btn_photo)
 
     root.mainloop()
-def load_existing_game(root):
+def load_existing_game(root:tk.Tk):
+    """
+    Zachowanie przycisku do ładowania gry
+    Korzyta z load_game a następnie przechodzi do okna gry
+
+    Args:
+        root (tk.Tk): Okno gry
+    """
     try:
         pet = load_game()
         window(root,pet)
     except Exception as e:
         messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
-def game(root, pet):
+def game(root:tk.Tk, pet:Pet):
+    """
+    Zachowanie przycisku ładowania zabawy
+
+    Odpala nowy toplevel i po zakończeniu gry cofa do głownego okna
+
+    Args:
+        root(tk.Tk): Okno gry
+        pet(Dane zwierzaka):
+    """
     root.update_idletasks()  # odśwież dane geometryczne
     geometry = root.geometry()  # np. "1400x800+100+200"
     size, x, y = geometry.split('+')
