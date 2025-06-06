@@ -67,7 +67,7 @@ def window(root:tk.Tk, pet:Pet):
             canvas.pet_photo = static_photo
             canvas.itemconfig(canvas.pet_image_id, image=static_photo)
 
-        canvas.after(duration_ms, revert_image)
+        canvas.after(duration_ms, lambda: (revert_image(), update_labels()))
 
     def update_labels():
         """
@@ -78,7 +78,35 @@ def window(root:tk.Tk, pet:Pet):
         canvas.itemconfig(canvas.tired_value_text, text=f"{int(pet.tired)} / 100")
         canvas.itemconfig(canvas.happy_icon_text, text=f"{int(pet.happy)} / {int(pet.happy_level)}")
 
+        hunger_percent = pet.hunger / pet.hunger_level if pet.hunger_level > 0 else 1
+        tired_percent = pet.tired / 100 if pet.tired is not None else 1
 
+        if canvas.is_sleeping:
+            new_pet_image_path = f"src/frontend/assets/{pet.species}/sleep_pet.png"
+            if os.path.exists(new_pet_image_path):
+                sleep_photo = load_photo(new_pet_image_path, 400, 400)
+                canvas.pet_photo = sleep_photo
+                canvas.itemconfig(canvas.pet_image_id, image=sleep_photo)
+            return
+
+        image_path = f"src/frontend/assets/{pet.species}/static_pet.png"
+
+        if hunger_percent <= 0.3 and tired_percent <= 0.3:
+            test_path = f"src/frontend/assets/{pet.species}/hungry_tired_pet.png"
+            if os.path.exists(test_path):
+                image_path = test_path
+        elif hunger_percent <= 0.3:
+            test_path = f"src/frontend/assets/{pet.species}/hungry_pet.png"
+            if os.path.exists(test_path):
+                image_path = test_path
+        elif tired_percent <= 0.3:
+            test_path = f"src/frontend/assets/{pet.species}/tired_pet.png"
+            if os.path.exists(test_path):
+                image_path = test_path
+
+        status_photo = load_photo(image_path, 400, 400)
+        canvas.pet_photo = status_photo
+        canvas.itemconfig(canvas.pet_image_id, image=status_photo)
 
     def decay_stats():
         """
@@ -135,6 +163,7 @@ def window(root:tk.Tk, pet:Pet):
             canvas.pet_photo = pet_photo2
             canvas.itemconfig(canvas.pet_image_id, image=pet_photo2)
 
+            update_labels()
 
         elif "eat" in tags:
             if pet.can_eat:
@@ -142,10 +171,15 @@ def window(root:tk.Tk, pet:Pet):
                 eating_path = f"src/frontend/assets/{pet.species}/eating_pet.png"
                 if os.path.exists(eating_path):
                     change_pet_image(eating_path, 1000)
+                    root.after(1000, update_labels)
+                else:
+                    update_labels()
+            else:
+                update_labels()
         elif "play" in tags:
             if not pet.sleeping:
                 game(root,pet)
-        update_labels()
+            update_labels()
 
     canvas.tag_bind("sleep", "<Button-1>", on_icon_click)
     canvas.tag_bind("eat", "<Button-1>", on_icon_click)

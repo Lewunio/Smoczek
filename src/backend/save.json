@@ -1,12 +1,12 @@
 {
-    "name": "s",
-    "species": "reddragon",
-    "birth": "2025-06-06 11:17:05.770998",
-    "happy": 1321.5,
-    "hunger": 28.0,
-    "exp": 90,
-    "tired": 5.0,
-    "hunger_level": 123,
-    "happy_level": 1323,
-    "save_date": "2025-06-06T11:17:38.257056"
+    "name": "adfo",
+    "species": "fenix",
+    "birth": "2025-06-06 23:52:25.905389",
+    "happy": 97.0,
+    "hunger": 94.5,
+    "exp": 32,
+    "tired": 88.5,
+    "hunger_level": 100,
+    "happy_level": 100,
+    "save_date": "2025-06-06T23:53:06.203352"
 }
