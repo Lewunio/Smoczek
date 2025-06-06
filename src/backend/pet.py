@@ -51,6 +51,7 @@ class Pet:
             self.exp += 5
     @property
     def can_eat(self):
+        """Czy zwierzak może jeść"""
         return self.hunger < self.hunger_level*0.95 and not self.sleeping
 
     def play(self):
@@ -60,9 +61,9 @@ class Pet:
         """
         if self.sleeping:
             return
-        self.happy = min(self.happy_level, self.happy + 20)
-        self.tired = max(0.0, self.tired - 10)
-        self.hunger = max(0.0, self.hunger - 10)
+        self.happy = min(self.happy_level, self.happy + 5)
+        self.tired = max(0.0, self.tired - 5)
+        self.hunger = max(0.0, self.hunger - 5)
         self.exp += 10
     def update_stats(self):
         """

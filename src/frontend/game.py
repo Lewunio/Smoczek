@@ -75,6 +75,7 @@ class DinoGame:
 
         # Inicjalizacja stanu gry
         self.obstacles = []
+        self.obstacle_after_id = None
         self.game_running = True
         self.speed = INITIAL_SPEED
         self.score = 0
@@ -91,8 +92,10 @@ class DinoGame:
         self.increase_speed()
 
     def disable_close(self):
-        """Zablokowanie zamykania okna (przycisk X)"""
-        pass
+        """Zmiana funkcji wychodzenia(przycisk X)"""
+        self.root.destroy()
+        if self.on_close_callback:
+            self.on_close_callback()
 
     def jump(self, event=None):
         """Obsługa skoku po naciśnięciu spacji"""
@@ -109,7 +112,7 @@ class DinoGame:
         rand = random.randint(0, 2)
         obstacle = self.canvas.create_image(x, y + 70, image=self.obstacle_imgs[rand], anchor="sw")
         self.obstacles.append(obstacle)
-        self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
+        self.obstacle_after_id = self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
 
     def update_game(self):
         """Główna pętla aktualizacji gry (grawitacja, kolizje, przeszkody)"""
@@ -166,7 +169,7 @@ class DinoGame:
                                                        image=self.game_over_img, anchor="center")
 
         # Zwiększenie radości smoka
-        for _ in range(self.score // 5 + 1):
+        for _ in range(self.score // 3 + 1):
             self.pet.play()
 
         self.show_game_over_options()
@@ -213,6 +216,9 @@ class DinoGame:
         self.score_text = self.canvas.create_text(WINDOW_WIDTH // 2, 40, anchor="n",
                                                   text=f"Wynik: {self.score}",
                                                   font=("Arial", 24, "bold"), fill="white")
+        if self.obstacle_after_id:
+            self.root.after_cancel(self.obstacle_after_id)
+            self.obstacle_after_id = None
 
         self.spawn_obstacle()
         self.update_game()
