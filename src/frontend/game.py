@@ -16,15 +16,35 @@ DOWN_SPEED = 3
 TOLERANCE = 40  # tolerancja kolizji
 
 class DinoGame:
+    """
+    Klasa reprezentująca grę typu Dino (skakanie przez przeszkody).
+
+    Obsługuje interfejs graficzny, przeszkody, skakanie, zliczanie punktów,
+    kolizje oraz wyświetlanie zakończenia gry. Działa w ramach osobnego
+    okna Toplevel w tkinter.
+
+    Atrybuty:
+        root (tk.Toplevel): Okno gry.
+        pet (Pet): Obiekt zwierzaka, który zdobywa punkty (exp) w grze.
+        canvas (tk.Canvas): Główne płótno do rysowania gry.
+        dino (int): ID obiektu graficznego zwierzaka.
+        obstacles (list): Lista aktywnych przeszkód.
+        score (int): Aktualny wynik gracza.
+        game_running (bool): Flaga stanu gry.
+        speed (float): Prędkość przesuwania przeszkód.
+        is_jumping (bool): Czy zwierzak jest w trakcie skoku.
+        jump_velocity (float): Aktualna prędkość skoku.
+        game_over_text (int|None): ID obrazka „game over”, jeśli gra się zakończyła.
+        on_close_callback (Callable): Funkcja wywoływana po zamknięciu gry.
+    """
     def __init__(self, root_given:tk.Toplevel, pet_given:Pet,on_close_callback=None):
         """
-        Inicjalizacja podstawowych zmiennych i ustawień okna gry
-        Ładowanie zdjęć
+        Inicjalizuje grę DinoGame, ustawia tło, postać, przeszkody i parametry.
 
         Args:
-            root_given(tk.Toplevel): Okno gry
-            pet_given(Pet): Postać gry
-            on_close_callback: callback function
+            root_given (tk.Toplevel): Okno Toplevel do wyświetlenia gry.
+            pet_given (Pet): Obiekt zwierzaka sterowanego przez gracza.
+            on_close_callback (Callable, optional): Funkcja wywoływana przy zamknięciu gry.
         """
         self.on_close_callback = on_close_callback
         self.ui_elements = []
@@ -87,19 +107,28 @@ class DinoGame:
         self.increase_speed()
 
     def disable_close(self):
-        """Zmiana funkcji wychodzenia(przycisk X)"""
+        """
+        Obsługuje zdarzenie zamknięcia okna (X) i wywołuje callback, jeśli podany.
+        """
         self.root.destroy()
         if self.on_close_callback:
             self.on_close_callback()
 
     def jump(self, event=None):
-        """Obsługa skoku po naciśnięciu spacji"""
+        """
+        Reakcja na naciśnięcie spacji — inicjuje skok, jeśli zwierzak nie skacze i gra trwa.
+
+        Args:
+            event (tk.Event, optional): Obiekt zdarzenia klawiatury.
+        """
         if not self.is_jumping and self.game_running:
             self.is_jumping = True
             self.jump_velocity = JUMP_HEIGHT
 
     def spawn_obstacle(self):
-        """Generowanie nowej przeszkody"""
+        """
+        Generuje nową przeszkodę w grze w losowej formie i pozycji początkowej.
+        """
         if not self.game_running:
             return
         x = WINDOW_WIDTH
@@ -110,7 +139,11 @@ class DinoGame:
         self.obstacle_after_id = self.root.after(OBSTACLE_INTERVAL, self.spawn_obstacle)
 
     def update_game(self):
-        """Główna pętla aktualizacji gry (grawitacja, kolizje, przeszkody)"""
+        """
+        Główna pętla gry — obsługuje grawitację, kolizje, poruszanie przeszkód i wynik.
+
+        Wywoływana co kilka milisekund za pomocą `after()`.
+        """
         if not self.game_running:
             return
 
@@ -146,11 +179,14 @@ class DinoGame:
 
     def check_collision(self, dino, obstacle):
         """
-        Detekcja kolizji z tolerancją
+        Sprawdza kolizję między dinozaurem a przeszkodą, uwzględniając tolerancję.
 
         Args:
-            dino: Postać
-            obstacle: Przeszkoda
+            dino (int): ID grafiki dinozaura.
+            obstacle (int): ID grafiki przeszkody.
+
+        Returns:
+            bool: True, jeśli wykryto kolizję, False w przeciwnym razie.
         """
         dino_coords = self.canvas.bbox(dino)
         obs_coords = self.canvas.bbox(obstacle)
@@ -164,7 +200,9 @@ class DinoGame:
         )
 
     def game_over(self):
-        """Obsługa końca gry"""
+        """
+        Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.
+        """
         self.game_running = False
         self.game_over_text = self.canvas.create_image(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 100,
                                                        image=self.game_over_img, anchor="center")
@@ -177,7 +215,9 @@ class DinoGame:
 
 
     def show_game_over_options(self):
-        """Wyświetlenie przycisków końca gry"""
+        """
+        Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.
+        """
         self.root.button_image = self.button_image  # zabezpieczenie przed GC
         center_x = WINDOW_WIDTH // 2
         center_y = WINDOW_HEIGHT // 2 + 80
@@ -191,7 +231,9 @@ class DinoGame:
         self.ui_elements.extend(bt2)
 
     def restart_game(self):
-        """Restartowanie gry"""
+        """
+        Resetuje stan gry do wartości początkowych i uruchamia nową rozgrywkę.
+        """
         for i in self.ui_elements:
             self.canvas.delete(i)
         self.ui_elements.clear()
@@ -226,23 +268,18 @@ class DinoGame:
         self.increase_speed()
 
     def increase_speed(self):
-        """Zwiększanie prędkości gry co pewien czas"""
+        """
+        Stopniowo zwiększa prędkość przesuwania przeszkód, aby gra była trudniejsza.
+        """
         if self.game_running:
             self.speed += 1.5
             self.root.after(3000, self.increase_speed)
 
     def quit_game(self):
-        """Wyjście z gry"""
+        """
+        Kończy grę i zamyka okno gry. Wywołuje opcjonalny callback po zamknięciu.
+        """
         self.final_score = self.score
         self.root.destroy()
         if self.on_close_callback:
             self.on_close_callback()
-
-
-# if __name__ == "__main__":
-#     root = tk.Tk()
-#     pet = Pet(name="sss", species="ss", happy=20)
-#     game = DinoGame(root, pet)
-#     root.mainloop()
-#     print("Z gry uzyskano wynik:", game.final_score)
-#     print(pet.__str__())

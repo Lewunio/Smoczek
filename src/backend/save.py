@@ -6,13 +6,17 @@ from .pet import Pet
 
 def save_game(pet: Pet, filename: str="src/backend/save.json"):
     """
-        Zapisuje stan zwierzaka do pliku JSON.
-        Przeksztalca dane zwierzaka na dict i zapisuje date.
-        Args:
-            pet (Pet): Dane zwierzaka do zapisu.
-            filename (str): Nazwa pliku do zapisu.
-        Returns:
-            None
+    Zapisuje stan zwierzaka do pliku JSON.
+
+    Przekształca dane obiektu Pet do formatu słownika i zapisuje
+    je do wskazanego pliku w formacie JSON. Dodaje również datę zapisu.
+
+    Args:
+        pet (Pet): Obiekt reprezentujący zwierzaka do zapisania.
+        filename (str): Ścieżka do pliku, do którego zapisane zostaną dane.
+
+    Returns:
+        None
     """
     try:
         data = {
@@ -34,13 +38,17 @@ def save_game(pet: Pet, filename: str="src/backend/save.json"):
 
 def load_game(filename: str="src/backend/save.json") -> Pet:
     """
-        Wczytuje stan gry z pliku JSON.
+    Wczytuje stan gry z pliku JSON i odtwarza obiekt Pet.
 
-        Args:
-            filename (str): Nazwa pliku do wczytania.
+    Odczytuje dane zapisane w pliku i rekonstruuje obiekt klasy Pet,
+    uzupełniając go również o aktualizację stanu na podstawie różnicy
+    czasu między zapisem a obecnym momentem.
 
-        Returns:
-            Pet: Dane w postaci zwierzecia.
+    Args:
+        filename (str): Ścieżka do pliku z danymi w formacie JSON.
+
+    Returns:
+        Pet: Odtworzony obiekt zwierzaka.
     """
 
     with open(filename, "r") as f:

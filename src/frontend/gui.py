@@ -10,11 +10,11 @@ WIDTH, HEIGHT = 1400, 800
 
 def window(root:tk.Tk, pet:Pet):
     """
-    Główne okno gry
+    Tworzy główne okno gry z animowanym interfejsem użytkownika.
 
     Args:
-        root (tk.Tk): Okno gry
-        pet (Pet): Postać gry
+        root (tk.Tk): Główne okno aplikacji (root).
+        pet (Pet): Obiekt zwierzaka do wyświetlenia i interakcji.
     """
     for widget in root.winfo_children():
         widget.destroy()
@@ -25,7 +25,9 @@ def window(root:tk.Tk, pet:Pet):
 
     def save_on_close():
         """
-        Zapisywanie przy zamykaniu
+        Obsługuje zamykanie gry z zapytaniem o zapis.
+
+        Jeśli użytkownik wybierze „Tak”, zapisuje stan gry przed zamknięciem okna.
         """
         should_save = messagebox.askyesno("Zamknij grę", "Czy chcesz zapisać grę przed wyjściem?",parent=root)
         if should_save:
@@ -56,13 +58,21 @@ def window(root:tk.Tk, pet:Pet):
     )
 
     def change_pet_image(image_path, duration_ms=1000):
-        """Zmiana zdjęcia czasowo"""
+        """
+        Tymczasowo zmienia obrazek zwierzaka, po czym przywraca domyślny.
+
+        Args:
+            image_path (str): Ścieżka do nowego obrazka.
+            duration_ms (int): Czas trwania w ms, po którym obrazek zostanie przywrócony.
+        """
         new_photo = load_photo(image_path, 400, 400)
         canvas.pet_photo = new_photo
         canvas.itemconfig(canvas.pet_image_id, image=new_photo)
 
         def revert_image():
-            """Po upływie czasu wróć do podstawowego obrazka"""
+            """
+            Przywraca domyślny statyczny obrazek zwierzaka po zakończeniu animacji.
+            """
             static_photo = load_photo(f"src/frontend/assets/{pet.species}/static_pet.png", 400, 400)
             canvas.pet_photo = static_photo
             canvas.itemconfig(canvas.pet_image_id, image=static_photo)
@@ -71,7 +81,8 @@ def window(root:tk.Tk, pet:Pet):
 
     def update_labels():
         """
-        Funkcja aktualizująca dane w GUI
+        Aktualizuje wartości wskaźników (głód, zmęczenie, szczęście, exp) w GUI
+        oraz aktualizuje grafikę zwierzaka w zależności od jego stanu.
         """
         canvas.itemconfig(canvas.exp_value_text, text=str(int(pet.exp)))
         canvas.itemconfig(canvas.hunger_value_text, text=f"{int(pet.hunger)} / {int(pet.hunger_level)}")
@@ -110,7 +121,9 @@ def window(root:tk.Tk, pet:Pet):
 
     def decay_stats():
         """
-        Obniżanie statów zwierzaka
+        Cyklicznie obniża statystyki zwierzaka i aktualizuje GUI.
+
+        Wywoływana co kilka sekund przez `root.after`.
         """
         if not canvas.winfo_exists():
             return  # Canvas już nie istnieje – zakończ
@@ -139,7 +152,12 @@ def window(root:tk.Tk, pet:Pet):
     canvas.create_image(WIDTH // 2 + button_spacing, button_y, image=game_icon, anchor="center", tags="play")
 
     def on_icon_click(event):
-        """Zachowanie po kliknięciu ikony"""
+        """
+        Obsługuje kliknięcia na ikonach (sen, jedzenie, zabawa).
+
+        Args:
+            event (tk.Event): Obiekt zdarzenia kliknięcia.
+        """
         item = canvas.find_closest(event.x, event.y)[0]
         tags = canvas.gettags(item)
         if "sleep" in tags:
@@ -244,11 +262,14 @@ def window(root:tk.Tk, pet:Pet):
 
 def choose_egg(root, start_game_callback):
     """
-    Tworzenie zwierzaka
+    Ekran wyboru jajka oraz konfiguracja zwierzaka.
+
+    Pozwala użytkownikowi wpisać imię, poziom głodu i czas zabawy,
+    a następnie wybrać jeden z dostępnych typów zwierzaków.
 
     Args:
-        root (tkinter.Tk): Okno gry
-        start_game_callback: wywołanie głównej gry
+        root (tk.Tk): Główne okno aplikacji.
+        start_game_callback (function): Funkcja wywoływana po wybraniu jajka.
     """
     for widget in root.winfo_children():
         widget.destroy()
@@ -334,8 +355,12 @@ def choose_egg(root, start_game_callback):
 
     def on_click(event):
         """
-        Jak gra ma się zachować po kliknięciu jajka
-        Wczutje dane z okienek
+        Obsługuje wybór jajka przez użytkownika i tworzy nowego zwierzaka.
+
+        Wczytuje dane z pól tekstowych i przekazuje do `start_game_callback`.
+
+        Args:
+            event (tk.Event): Obiekt zdarzenia kliknięcia.
         """
         clicked = canvas.find_closest(event.x, event.y)[0]
         for id_egg, species_index in egg_ids:
@@ -363,9 +388,10 @@ def choose_egg(root, start_game_callback):
 
 def menu():
     """
-    Tworzenie okna gry i uruchamianie menu
-    Gracz może wybrać co chce zrobić
-    Ustawia przyciski i ładuje grafiki menu
+    Tworzy i uruchamia menu główne gry.
+
+    Pozwala użytkownikowi rozpocząć nową grę, wczytać istniejącą
+    lub zakończyć aplikację. Ustawia tło, logo i przyciski.
     """
     root = tk.Tk()
     root.title("Menu Główne")
@@ -406,11 +432,10 @@ def menu():
     root.mainloop()
 def load_existing_game(root:tk.Tk):
     """
-    Zachowanie przycisku do ładowania gry
-    Korzyta z load_game a następnie przechodzi do okna gry
+    Wczytuje zapisany stan gry i przechodzi do okna głównego.
 
     Args:
-        root (tk.Tk): Okno gry
+        root (tk.Tk): Główne okno aplikacji.
     """
     try:
         pet = load_game()
@@ -419,13 +444,11 @@ def load_existing_game(root:tk.Tk):
         messagebox.showerror("Błąd", f"Nie udało się wczytać gry:\n{e}")
 def game(root:tk.Tk, pet:Pet):
     """
-    Zachowanie przycisku ładowania zabawy
-
-    Odpala nowy toplevel i po zakończeniu gry cofa do głownego okna
+    Uruchamia minigrę i chowa główne okno.
 
     Args:
-        root(tk.Tk): Okno gry
-        pet(Dane zwierzaka):
+        root (tk.Tk): Okno główne.
+        pet (Pet): Obiekt zwierzaka do przekazania do minigry.
     """
     root.update_idletasks()  # odśwież dane geometryczne
     geometry = root.geometry()  # np. "1400x800+100+200"
@@ -441,6 +464,9 @@ def game(root:tk.Tk, pet:Pet):
     game_window.geometry(f"1400x800+{x}+{y}")
 
     def back_to_main():
+        """
+        Przywraca główne okno po zamknięciu minigry.
+        """
         root.deiconify()
         window(root, pet)
 

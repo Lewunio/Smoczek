@@ -3,6 +3,22 @@ from tkinter import PhotoImage
 from PIL import Image, ImageTk
 
 def make_image_button(canvas, x, y, text, command, image):
+    """
+    Tworzy przycisk graficzny z tekstem i obramowaniem na podanym kanwie.
+
+    Przycisk jest osadzony na obrazie, z centralnym tekstem, a wokół dodana jest ramka.
+
+    Args:
+        canvas (tk.Canvas): Obiekt kanwy, na której zostanie utworzony przycisk.
+        x (int): Pozycja X (środek przycisku).
+        y (int): Pozycja Y (środek przycisku).
+        text (str): Tekst wyświetlany na przycisku.
+        command (Callable): Funkcja wywoływana po kliknięciu.
+        image (tk.PhotoImage): Obraz tła przycisku.
+
+    Returns:
+        list: Lista zawierająca ID utworzonego przycisku i ramki na kanwie.
+    """
     width = 400
     height = 75
     ramka = canvas.create_rectangle(
@@ -27,15 +43,15 @@ def make_image_button(canvas, x, y, text, command, image):
 
 def load_photo(path:str,size_x:int,size_y:int)->PhotoImage:
     """
-    Funkcja ładowania zdjęć
+    Ładuje i skaluje obrazek do podanych wymiarów.
 
     Args:
-        path(str): ścieżka do zdjęcia
-        size_x(int): wymiar x
-        size_y(int): wymiar y
+        path (str): Ścieżka do pliku graficznego.
+        size_x (int): Szerokość w pikselach.
+        size_y (int): Wysokość w pikselach.
 
     Returns:
-        PhotoImage: Przygotowane zdjęcie
+        PhotoImage: Obiekt obrazka gotowy do użycia w Tkinterze.
     """
     logo_img = Image.open(path).resize((size_x,size_y))
     return ImageTk.PhotoImage(logo_img)
