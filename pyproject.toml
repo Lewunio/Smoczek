@@ -3,6 +3,10 @@ name = "smoczek"
 version = "0.1.0"
 description = "tamagochi"
 requires-python = ">=3.13"
+
 dependencies = [
     "Pillow"
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
