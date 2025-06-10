@@ -7,7 +7,7 @@ class Pet:
     """
     Klasa reprezentująca zwierzaka.
 
-    Atrybuty:
+    Args:
         name (str): Imię zwierzaka.
         species (str): Gatunek zwierzaka.
         birth (datetime): Data urodzenia.
@@ -19,7 +19,7 @@ class Pet:
         happy_level (float): Maksymalny poziom szczęścia.
         sleeping (bool): Czy zwierzak śpi.
     """
-    def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, happy:float=100, hunger:float=100, exp:float=0, hunger_level:float=100, happy_level:float=100):
+    def __init__(self, name:str, species:str, birth:datetime=datetime.today(), tired:float=100, exp:float=0, hunger_level:float=100, happy_level:float=100):
         """
         Inicjalizuje nowego zwierzaka.
 
@@ -28,8 +28,6 @@ class Pet:
             species (str): Gatunek zwierzaka.
             birth (datetime, optional): Data urodzenia. Domyślnie: dzisiaj.
             tired (float, optional): Poziom zmęczenia. Domyślnie 100.
-            happy (float, optional): Poziom szczęścia. Domyślnie 100.
-            hunger (float, optional): Poziom głodu. Domyślnie 100.
             exp (float, optional): Poziom doświadczenia. Domyślnie 0.
             hunger_level (float, optional): Maksymalny głód. Domyślnie 100.
             happy_level (float, optional): Maksymalne szczęście. Domyślnie 100.

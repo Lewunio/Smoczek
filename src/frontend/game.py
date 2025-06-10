@@ -23,7 +23,7 @@ class DinoGame:
     kolizje oraz wyświetlanie zakończenia gry. Działa w ramach osobnego
     okna Toplevel w tkinter.
 
-    Atrybuty:
+    Args:
         root (tk.Toplevel): Okno gry.
         pet (Pet): Obiekt zwierzaka, który zdobywa punkty (exp) w grze.
         canvas (tk.Canvas): Główne płótno do rysowania gry.
