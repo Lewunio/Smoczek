@@ -57,8 +57,6 @@ def load_game(filename: str="src/backend/save.json") -> Pet:
     pet = Pet(name=data["name"],
               species=data["species"],
               birth=data["birth"],
-              happy=data["happy"],
-              hunger=data["hunger"],
               exp=data["exp"],
               tired=data["tired"],
               hunger_level=data["hunger_level"],
