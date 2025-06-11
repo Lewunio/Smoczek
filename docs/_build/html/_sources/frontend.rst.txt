@@ -1,0 +1,38 @@
+frontend package
+================
+
+Submodules
+----------
+
+frontend.game module
+--------------------
+
+.. automodule:: frontend.game
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+frontend.gui module
+-------------------
+
+.. automodule:: frontend.gui
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+frontend.tools module
+---------------------
+
+.. automodule:: frontend.tools
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: frontend
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :no-index:

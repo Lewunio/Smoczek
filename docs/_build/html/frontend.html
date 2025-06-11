@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>frontend package &#8212; Dragon Pet 1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=29a6c3e3"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="main module" href="main.html" />
+    <link rel="prev" title="backend package" href="backend.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="frontend-package">
+<h1>frontend package<a class="headerlink" href="#frontend-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-frontend.game">
+<span id="frontend-game-module"></span><h2>frontend.game module<a class="headerlink" href="#module-frontend.game" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="frontend.game.DinoGame">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frontend.game.</span></span><span class="sig-name descname"><span class="pre">DinoGame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_given</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Toplevel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_given</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_close_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Klasa reprezentująca grę typu Dino (skakanie przez przeszkody).</p>
+<p>Obsługuje interfejs graficzny, przeszkody, skakanie, zliczanie punktów,
+kolizje oraz wyświetlanie zakończenia gry. Działa w ramach osobnego
+okna Toplevel w tkinter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Toplevel</em>) – Okno gry.</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka, który zdobywa punkty (exp) w grze.</p></li>
+<li><p><strong>canvas</strong> (<em>tk.Canvas</em>) – Główne płótno do rysowania gry.</p></li>
+<li><p><strong>dino</strong> (<em>int</em>) – ID obiektu graficznego zwierzaka.</p></li>
+<li><p><strong>obstacles</strong> (<em>list</em>) – Lista aktywnych przeszkód.</p></li>
+<li><p><strong>score</strong> (<em>int</em>) – Aktualny wynik gracza.</p></li>
+<li><p><strong>game_running</strong> (<em>bool</em>) – Flaga stanu gry.</p></li>
+<li><p><strong>speed</strong> (<em>float</em>) – Prędkość przesuwania przeszkód.</p></li>
+<li><p><strong>is_jumping</strong> (<em>bool</em>) – Czy zwierzak jest w trakcie skoku.</p></li>
+<li><p><strong>jump_velocity</strong> (<em>float</em>) – Aktualna prędkość skoku.</p></li>
+<li><p><strong>game_over_text</strong> (<em>int</em><em>|</em><em>None</em>) – ID obrazka „game over”, jeśli gra się zakończyła.</p></li>
+<li><p><strong>on_close_callback</strong> (<em>Callable</em>) – Funkcja wywoływana po zamknięciu gry.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.check_collision">
+<span class="sig-name descname"><span class="pre">check_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dino</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstacle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.check_collision" title="Link to this definition">¶</a></dt>
+<dd><p>Sprawdza kolizję między dinozaurem a przeszkodą, uwzględniając tolerancję.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dino</strong> (<em>int</em>) – ID grafiki dinozaura.</p></li>
+<li><p><strong>obstacle</strong> (<em>int</em>) – ID grafiki przeszkody.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True, jeśli wykryto kolizję, False w przeciwnym razie.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.disable_close">
+<span class="sig-name descname"><span class="pre">disable_close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.disable_close" title="Link to this definition">¶</a></dt>
+<dd><p>Obsługuje zdarzenie zamknięcia okna (X) i wywołuje callback, jeśli podany.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.game_over">
+<span class="sig-name descname"><span class="pre">game_over</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.game_over" title="Link to this definition">¶</a></dt>
+<dd><p>Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.increase_speed">
+<span class="sig-name descname"><span class="pre">increase_speed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.increase_speed" title="Link to this definition">¶</a></dt>
+<dd><p>Stopniowo zwiększa prędkość przesuwania przeszkód, aby gra była trudniejsza.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.jump">
+<span class="sig-name descname"><span class="pre">jump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.jump" title="Link to this definition">¶</a></dt>
+<dd><p>Reakcja na naciśnięcie spacji — inicjuje skok, jeśli zwierzak nie skacze i gra trwa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>tk.Event</em><em>, </em><em>optional</em>) – Obiekt zdarzenia klawiatury.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.quit_game">
+<span class="sig-name descname"><span class="pre">quit_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.quit_game" title="Link to this definition">¶</a></dt>
+<dd><p>Kończy grę i zamyka okno gry. Wywołuje opcjonalny callback po zamknięciu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.restart_game">
+<span class="sig-name descname"><span class="pre">restart_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.restart_game" title="Link to this definition">¶</a></dt>
+<dd><p>Resetuje stan gry do wartości początkowych i uruchamia nową rozgrywkę.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.show_game_over_options">
+<span class="sig-name descname"><span class="pre">show_game_over_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.show_game_over_options" title="Link to this definition">¶</a></dt>
+<dd><p>Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.spawn_obstacle">
+<span class="sig-name descname"><span class="pre">spawn_obstacle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.spawn_obstacle" title="Link to this definition">¶</a></dt>
+<dd><p>Generuje nową przeszkodę w grze w losowej formie i pozycji początkowej.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frontend.game.DinoGame.update_game">
+<span class="sig-name descname"><span class="pre">update_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.game.DinoGame.update_game" title="Link to this definition">¶</a></dt>
+<dd><p>Główna pętla gry — obsługuje grawitację, kolizje, poruszanie przeszkód i wynik.</p>
+<p>Wywoływana co kilka milisekund za pomocą <cite>after()</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-frontend.gui">
+<span id="frontend-gui-module"></span><h2>frontend.gui module<a class="headerlink" href="#module-frontend.gui" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.gui.choose_egg">
+<span class="sig-prename descclassname"><span class="pre">frontend.gui.</span></span><span class="sig-name descname"><span class="pre">choose_egg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_game_callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.gui.choose_egg" title="Link to this definition">¶</a></dt>
+<dd><p>Ekran wyboru jajka oraz konfiguracja zwierzaka.</p>
+<p>Pozwala użytkownikowi wpisać imię, poziom głodu i czas zabawy,
+a następnie wybrać jeden z dostępnych typów zwierzaków.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji.</p></li>
+<li><p><strong>start_game_callback</strong> (<em>function</em>) – Funkcja wywoływana po wybraniu jajka.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.gui.game">
+<span class="sig-prename descclassname"><span class="pre">frontend.gui.</span></span><span class="sig-name descname"><span class="pre">game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.gui.game" title="Link to this definition">¶</a></dt>
+<dd><p>Uruchamia minigrę i chowa główne okno.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Okno główne.</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka do przekazania do minigry.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.gui.load_existing_game">
+<span class="sig-prename descclassname"><span class="pre">frontend.gui.</span></span><span class="sig-name descname"><span class="pre">load_existing_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.gui.load_existing_game" title="Link to this definition">¶</a></dt>
+<dd><p>Wczytuje zapisany stan gry i przechodzi do okna głównego.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.gui.menu">
+<span class="sig-prename descclassname"><span class="pre">frontend.gui.</span></span><span class="sig-name descname"><span class="pre">menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frontend.gui.menu" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy i uruchamia menu główne gry.</p>
+<p>Pozwala użytkownikowi rozpocząć nową grę, wczytać istniejącą
+lub zakończyć aplikację. Ustawia tło, logo i przyciski.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.gui.window">
+<span class="sig-prename descclassname"><span class="pre">frontend.gui.</span></span><span class="sig-name descname"><span class="pre">window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.gui.window" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy główne okno gry z animowanym interfejsem użytkownika.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji (root).</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka do wyświetlenia i interakcji.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-frontend.tools">
+<span id="frontend-tools-module"></span><h2>frontend.tools module<a class="headerlink" href="#module-frontend.tools" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.tools.load_photo">
+<span class="sig-prename descclassname"><span class="pre">frontend.tools.</span></span><span class="sig-name descname"><span class="pre">load_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PhotoImage</span></span></span><a class="headerlink" href="#frontend.tools.load_photo" title="Link to this definition">¶</a></dt>
+<dd><p>Ładuje i skaluje obrazek do podanych wymiarów.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Ścieżka do pliku graficznego.</p></li>
+<li><p><strong>size_x</strong> (<em>int</em>) – Szerokość w pikselach.</p></li>
+<li><p><strong>size_y</strong> (<em>int</em>) – Wysokość w pikselach.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Obiekt obrazka gotowy do użycia w Tkinterze.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PhotoImage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frontend.tools.make_image_button">
+<span class="sig-prename descclassname"><span class="pre">frontend.tools.</span></span><span class="sig-name descname"><span class="pre">make_image_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">canvas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frontend.tools.make_image_button" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy przycisk graficzny z tekstem i obramowaniem na podanym kanwie.</p>
+<p>Przycisk jest osadzony na obrazie, z centralnym tekstem, a wokół dodana jest ramka.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>canvas</strong> (<em>tk.Canvas</em>) – Obiekt kanwy, na której zostanie utworzony przycisk.</p></li>
+<li><p><strong>x</strong> (<em>int</em>) – Pozycja X (środek przycisku).</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – Pozycja Y (środek przycisku).</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – Tekst wyświetlany na przycisku.</p></li>
+<li><p><strong>command</strong> (<em>Callable</em>) – Funkcja wywoływana po kliknięciu.</p></li>
+<li><p><strong>image</strong> (<em>tk.PhotoImage</em>) – Obraz tła przycisku.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista zawierająca ID utworzonego przycisku i ramki na kanwie.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">DinoGame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_given</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Toplevel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet_given</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_close_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Klasa reprezentująca grę typu Dino (skakanie przez przeszkody).</p>
+<p>Obsługuje interfejs graficzny, przeszkody, skakanie, zliczanie punktów,
+kolizje oraz wyświetlanie zakończenia gry. Działa w ramach osobnego
+okna Toplevel w tkinter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Toplevel</em>) – Okno gry.</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka, który zdobywa punkty (exp) w grze.</p></li>
+<li><p><strong>canvas</strong> (<em>tk.Canvas</em>) – Główne płótno do rysowania gry.</p></li>
+<li><p><strong>dino</strong> (<em>int</em>) – ID obiektu graficznego zwierzaka.</p></li>
+<li><p><strong>obstacles</strong> (<em>list</em>) – Lista aktywnych przeszkód.</p></li>
+<li><p><strong>score</strong> (<em>int</em>) – Aktualny wynik gracza.</p></li>
+<li><p><strong>game_running</strong> (<em>bool</em>) – Flaga stanu gry.</p></li>
+<li><p><strong>speed</strong> (<em>float</em>) – Prędkość przesuwania przeszkód.</p></li>
+<li><p><strong>is_jumping</strong> (<em>bool</em>) – Czy zwierzak jest w trakcie skoku.</p></li>
+<li><p><strong>jump_velocity</strong> (<em>float</em>) – Aktualna prędkość skoku.</p></li>
+<li><p><strong>game_over_text</strong> (<em>int</em><em>|</em><em>None</em>) – ID obrazka „game over”, jeśli gra się zakończyła.</p></li>
+<li><p><strong>on_close_callback</strong> (<em>Callable</em>) – Funkcja wywoływana po zamknięciu gry.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">check_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dino</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstacle</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Sprawdza kolizję między dinozaurem a przeszkodą, uwzględniając tolerancję.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dino</strong> (<em>int</em>) – ID grafiki dinozaura.</p></li>
+<li><p><strong>obstacle</strong> (<em>int</em>) – ID grafiki przeszkody.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True, jeśli wykryto kolizję, False w przeciwnym razie.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">disable_close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Obsługuje zdarzenie zamknięcia okna (X) i wywołuje callback, jeśli podany.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">game_over</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">increase_speed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Stopniowo zwiększa prędkość przesuwania przeszkód, aby gra była trudniejsza.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">jump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Reakcja na naciśnięcie spacji — inicjuje skok, jeśli zwierzak nie skacze i gra trwa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>tk.Event</em><em>, </em><em>optional</em>) – Obiekt zdarzenia klawiatury.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">quit_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Kończy grę i zamyka okno gry. Wywołuje opcjonalny callback po zamknięciu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">restart_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Resetuje stan gry do wartości początkowych i uruchamia nową rozgrywkę.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">show_game_over_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Kończy grę — zatrzymuje mechanikę, wyświetla napis końca gry i zwiększa exp zwierzaka.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">spawn_obstacle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Generuje nową przeszkodę w grze w losowej formie i pozycji początkowej.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">update_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Główna pętla gry — obsługuje grawitację, kolizje, poruszanie przeszkód i wynik.</p>
+<p>Wywoływana co kilka milisekund za pomocą <cite>after()</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">choose_egg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_game_callback</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Ekran wyboru jajka oraz konfiguracja zwierzaka.</p>
+<p>Pozwala użytkownikowi wpisać imię, poziom głodu i czas zabawy,
+a następnie wybrać jeden z dostępnych typów zwierzaków.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji.</p></li>
+<li><p><strong>start_game_callback</strong> (<em>function</em>) – Funkcja wywoływana po wybraniu jajka.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Uruchamia minigrę i chowa główne okno.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Okno główne.</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka do przekazania do minigry.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">load_existing_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Wczytuje zapisany stan gry i przechodzi do okna głównego.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">make_image_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">canvas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Tworzy przycisk graficzny z tekstem i obramowaniem na podanym kanwie.</p>
+<p>Przycisk jest osadzony na obrazie, z centralnym tekstem, a wokół dodana jest ramka.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>canvas</strong> (<em>tk.Canvas</em>) – Obiekt kanwy, na której zostanie utworzony przycisk.</p></li>
+<li><p><strong>x</strong> (<em>int</em>) – Pozycja X (środek przycisku).</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – Pozycja Y (środek przycisku).</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – Tekst wyświetlany na przycisku.</p></li>
+<li><p><strong>command</strong> (<em>Callable</em>) – Funkcja wywoływana po kliknięciu.</p></li>
+<li><p><strong>image</strong> (<em>tk.PhotoImage</em>) – Obraz tła przycisku.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista zawierająca ID utworzonego przycisku i ramki na kanwie.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Tworzy i uruchamia menu główne gry.</p>
+<p>Pozwala użytkownikowi rozpocząć nową grę, wczytać istniejącą
+lub zakończyć aplikację. Ustawia tło, logo i przyciski.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">frontend.</span></span><span class="sig-name descname"><span class="pre">window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pet</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Tworzy główne okno gry z animowanym interfejsem użytkownika.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>tk.Tk</em>) – Główne okno aplikacji (root).</p></li>
+<li><p><strong>pet</strong> (<a class="reference internal" href="backend.html#backend.Pet" title="backend.Pet"><em>Pet</em></a>) – Obiekt zwierzaka do wyświetlenia i interakcji.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Dragon Pet</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="backend.html">backend package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">frontend package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="backend.html" title="previous chapter">backend package</a></li>
+      <li>Next: <a href="main.html" title="next chapter">main module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Maciej Lewandowski, Adam Dański.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/frontend.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
